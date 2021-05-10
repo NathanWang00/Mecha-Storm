@@ -5,10 +5,24 @@ class Play extends Phaser.Scene {
 
     preload() {
         this.load.image('player', './assets/TempPlayer.png');
+        this.load.image('swordBeam', './assets/TempSwordBeam.png');
     }
 
     create() {
         this.cameras.main.setBackgroundColor('#FFFFFF');
+
+        // player 
+        this.player = this.physics.add.sprite(520, 650, 'player');
+        //this.player = this.add.rectangle(520, 650, 64, 64, 0xAAAAAA);
+        //this.physics.add.existing(this.player, true);
+        this.player.setCollideWorldBounds(true);
+
+        // keyboard controls
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.shootKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
+
+        // Sword pool
+        this.swordGroup = new SwordGroup(this);
 
         // temp UI border
         this.rect1 = this.add.rectangle(0, 0, 180, 720, 0x000000).setOrigin(0, 0);
@@ -19,16 +33,9 @@ class Play extends Phaser.Scene {
         this.physics.add.existing(this.rect2, true);
         this.rect2.body.immovable = true;
 
-        // player 
-        this.player = this.physics.add.sprite(520, 650, 'player');
-        //this.player = this.add.rectangle(520, 650, 64, 64, 0xAAAAAA);
-        //this.physics.add.existing(this.player, true);
-        this.player.setCollideWorldBounds(true);
-
-        // keyboard controls
-        this.cursors = this.input.keyboard.createCursorKeys();
-
-
+        // Collisions
+        this.physics.add.collider(this.player, this.rect1);
+        this.physics.add.collider(this.player, this.rect2);
     }
 
     update() {
@@ -56,5 +63,10 @@ class Play extends Phaser.Scene {
         }
         this.player.setVelocityX(horz * tempSpeed);
         this.player.setVelocityY(vert * tempSpeed);
+
+        //attack
+        if (Phaser.Input.Keyboard.JustDown(this.shootKey)) {
+            this.swordGroup.shootBeam(this.player.x, this.player.y);
+        }
     }
 }

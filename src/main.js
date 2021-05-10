@@ -27,4 +27,5 @@ let config = {
 }
 
 let game = new Phaser.Game(config);
-let playerSpeed = 375;
+let playerSpeed = 400;
+let swordSpeed = 900;
