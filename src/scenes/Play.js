@@ -3,6 +3,10 @@ class Play extends Phaser.Scene {
         super("playScene");
     }
 
+    preload() {
+        this.load.image('player', './assets/TempPlayer.png');
+    }
+
     create() {
         this.cameras.main.setBackgroundColor('#FFFFFF');
 
@@ -16,7 +20,41 @@ class Play extends Phaser.Scene {
         this.rect2.body.immovable = true;
 
         // player 
-        this.player = this.add.rectangle(520, 650, 64, 64, 0xAAAAAA);
+        this.player = this.physics.add.sprite(520, 650, 'player');
+        //this.player = this.add.rectangle(520, 650, 64, 64, 0xAAAAAA);
+        //this.physics.add.existing(this.player, true);
         this.player.setCollideWorldBounds(true);
+
+        // keyboard controls
+        this.cursors = this.input.keyboard.createCursorKeys();
+
+
+    }
+
+    update() {
+        let horz = 0;
+        let vert = 0;
+        let tempSpeed = playerSpeed;
+
+        // player movement
+        if (this.cursors.up.isDown) {
+            vert = -1;
+        } else {
+            if (this.cursors.down.isDown) {
+                vert = 1;
+            }
+        }
+        if (this.cursors.left.isDown) {
+            horz = -1;
+        } else {
+            if (this.cursors.right.isDown) {
+                horz = 1;
+            }
+        }
+        if (horz != 0 && vert != 0) {
+            tempSpeed = 0.709 * playerSpeed;//for diagonal movement
+        }
+        this.player.setVelocityX(horz * tempSpeed);
+        this.player.setVelocityY(vert * tempSpeed);
     }
 }
