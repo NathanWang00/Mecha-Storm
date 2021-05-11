@@ -6,6 +6,9 @@ class Play extends Phaser.Scene {
     preload() {
         this.load.image('player', './assets/TempPlayer.png');
         this.load.image('swordBeam', './assets/TempSwordBeam.png');
+        this.load.image('scout', './assets/Scout_PH.png');
+        this.load.plugin('rexbulletplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexbulletplugin.min.js', true);
+
     }
 
     create() {
@@ -13,8 +16,6 @@ class Play extends Phaser.Scene {
 
         // player 
         this.player = this.physics.add.sprite(520, 650, 'player');
-        //this.player = this.add.rectangle(520, 650, 64, 64, 0xAAAAAA);
-        //this.physics.add.existing(this.player, true);
         this.player.setCollideWorldBounds(true);
 
         // keyboard controls
@@ -23,6 +24,10 @@ class Play extends Phaser.Scene {
 
         // Sword pool
         this.swordGroup = new SwordGroup(this);
+
+        // Enemy groups
+        this.scoutGroup = new ScoutGroup(this);
+        this.scoutGroup.spawn(520, 100, this, 50);
 
         // temp UI border
         this.rect1 = this.add.rectangle(0, 0, 180, 720, 0x000000).setOrigin(0, 0);
@@ -66,7 +71,13 @@ class Play extends Phaser.Scene {
 
         //attack
         if (Phaser.Input.Keyboard.JustDown(this.shootKey)) {
-            this.swordGroup.shootBeam(this.player.x, this.player.y);
+            this.swordGroup.shootBeam(this.player.x, this.player.y - 60);
         }
+    }
+
+    enableBullet(obj, moveSpeed) {
+        obj.bullet = this.plugins.get('rexbulletplugin').add(obj, {
+            speed: moveSpeed
+        });
     }
 }

@@ -27,5 +27,14 @@ let config = {
 }
 
 let game = new Phaser.Game(config);
-let playerSpeed = 400;
+let playerSpeed = 500;
 let swordSpeed = 900;
+
+/* 
+
+NOTES FOR THE GRADERS OF CMPM-120-1, PROFESSOR ADAM SMITH:
+
+- Used the "rexbullet plugin" by Rex under the MIT License. Source: https://github.com/rexrainbow/phaser3-rex-notes/
+
+
+*/
