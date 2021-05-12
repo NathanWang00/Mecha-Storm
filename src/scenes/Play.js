@@ -22,12 +22,12 @@ class Play extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
         this.shootKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
 
-        // Sword pool
-        this.swordGroup = new SwordGroup(this);
-
         // Enemy groups
         this.scoutGroup = new ScoutGroup(this);
         this.scoutGroup.spawn(520, 100, this, 50);
+
+        // Sword pool
+        this.swordGroup = new SwordGroup(this);
 
         // temp UI border
         this.rect1 = this.add.rectangle(0, 0, 180, 720, 0x000000).setOrigin(0, 0);
@@ -41,6 +41,11 @@ class Play extends Phaser.Scene {
         // Collisions
         this.physics.add.collider(this.player, this.rect1);
         this.physics.add.collider(this.player, this.rect2);
+        this.physics.add.overlap(this.scoutGroup, this.swordGroup, function (scout, swordBeam)
+        {
+            swordBeam.hit();
+            scout.hit();
+        });
     }
 
     update() {
