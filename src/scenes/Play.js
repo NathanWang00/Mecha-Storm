@@ -5,8 +5,9 @@ class Play extends Phaser.Scene {
 
     preload() {
         this.load.image('player', './assets/TempPlayer.png');
+        this.load.image('hitbox', './assets/PlayerHitbox.png');
         this.load.image('swordBeam', './assets/TempSwordBeam.png');
-        this.load.image('scout', './assets/Scout_PH.png');
+        this.load.image('scout', './assets/Scout.png');
         this.load.plugin('rexbulletplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexbulletplugin.min.js', true);
 
     }
@@ -20,10 +21,16 @@ class Play extends Phaser.Scene {
         this.damageable = true;
         this.actionable = true;
         this.pingPong = 0; // logic for flickering sprite
+        this.player.body.setSize(54, 54, true);
+
+        // hitbox
+        this.hitbox = this.physics.add.sprite(520, 650, 'hitbox');
 
         // keyboard controls
         this.cursors = this.input.keyboard.createCursorKeys();
         this.shootKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
+        this.focusKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
+        this.focus = 1;
 
         // Enemy groups
         this.scoutGroup = new ScoutGroup(this);
@@ -48,7 +55,7 @@ class Play extends Phaser.Scene {
             swordBeam.hit();
             scout.hit(swordBeam.getDamage());
         });
-        this.physics.add.overlap(this.scoutGroup, this.player, this.playerHurt, null, this);
+        this.physics.add.overlap(this.scoutGroup, this.hitbox, this.playerHurt, null, this);
 
         // Spawning
         this.spawnTrack = 1;
@@ -79,13 +86,20 @@ class Play extends Phaser.Scene {
             if (horz != 0 && vert != 0) {
                 tempSpeed = 0.709 * playerSpeed;//for diagonal movement
             }
-            this.player.setVelocityX(horz * tempSpeed);
-            this.player.setVelocityY(vert * tempSpeed);
+            this.player.setVelocityX(horz * tempSpeed * this.focus);
+            this.player.setVelocityY(vert * tempSpeed * this.focus);
     
             //attack
             if (Phaser.Input.Keyboard.JustDown(this.shootKey)) {
                 this.swordGroup.shootBeam(this.player.x, this.player.y - 60);
             }
+        }
+
+        if (Phaser.Input.Keyboard.JustDown(this.focusKey)) {
+            this.focus = focusModifier;
+        }
+        if (Phaser.Input.Keyboard.JustUp(this.focusKey)) {
+            this.focus = 1;
         }
 
         if (this.pingPong != 0) {
@@ -98,6 +112,10 @@ class Play extends Phaser.Scene {
                 }
             }
         }
+
+        // hitbox
+        this.hitbox.x = this.player.x;
+        this.hitbox.y = this.player.y;
     }
 
     enableBullet(obj, moveSpeed) {
@@ -120,27 +138,28 @@ class Play extends Phaser.Scene {
 
     playerHurt() {
         if (this.damageable) {
-            if (lives <= 0) {
-                //game over stuff
-                //console.log("game over");
-            }
-            lives--;
             this.actionable = false;
             this.damageable = false;
             this.player.alpha = 0;
             this.player.body.setVelocityX(0);
             this.player.body.setVelocityY(0);
-    
-            this.recover = this.time.delayedCall(450, () => {
-                this.actionable = true;
-                this.pingPong = 1;
-            }, null, this);
 
-            this.invincible = this.time.delayedCall(3000, () => {
-                this.damageable = true;
-                this.player.alpha = 1;
-                this.pingPong = 0;
-            }, null, this);
+            if (lives <= 0) {
+                //game over stuff
+                console.log("game over");
+            } else {
+                this.recover = this.time.delayedCall(450, () => {
+                    this.actionable = true;
+                    this.pingPong = 1;
+                }, null, this);
+    
+                this.invincible = this.time.delayedCall(3000, () => {
+                    this.damageable = true;
+                    this.player.alpha = 1;
+                    this.pingPong = 0;
+                }, null, this);
+            }
+            lives--;
         }
     }
 }
