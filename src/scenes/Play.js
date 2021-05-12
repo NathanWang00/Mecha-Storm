@@ -17,6 +17,9 @@ class Play extends Phaser.Scene {
         // player 
         this.player = this.physics.add.sprite(520, 650, 'player');
         this.player.setCollideWorldBounds(true);
+        this.damageable = true;
+        this.actionable = true;
+        this.pingPong = 0; // logic for flickering sprite
 
         // keyboard controls
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -24,7 +27,6 @@ class Play extends Phaser.Scene {
 
         // Enemy groups
         this.scoutGroup = new ScoutGroup(this);
-        this.scoutGroup.spawn(520, 100, this, 50);
 
         // Sword pool
         this.swordGroup = new SwordGroup(this);
@@ -44,8 +46,13 @@ class Play extends Phaser.Scene {
         this.physics.add.overlap(this.scoutGroup, this.swordGroup, function (scout, swordBeam)
         {
             swordBeam.hit();
-            scout.hit();
+            scout.hit(swordBeam.getDamage());
         });
+        this.physics.add.overlap(this.scoutGroup, this.player, this.playerHurt, null, this);
+
+        // Spawning
+        this.spawnTrack = 1;
+        this.spawnWave(this.spawnTrack);
     }
 
     update() {
@@ -53,30 +60,43 @@ class Play extends Phaser.Scene {
         let vert = 0;
         let tempSpeed = playerSpeed;
 
-        // player movement
-        if (this.cursors.up.isDown) {
-            vert = -1;
-        } else {
-            if (this.cursors.down.isDown) {
-                vert = 1;
+        if (this.actionable) {
+            // player movement
+            if (this.cursors.up.isDown) {
+                vert = -1;
+            } else {
+                if (this.cursors.down.isDown) {
+                    vert = 1;
+                }
+            }
+            if (this.cursors.left.isDown) {
+                horz = -1;
+            } else {
+                if (this.cursors.right.isDown) {
+                    horz = 1;
+                }
+            }
+            if (horz != 0 && vert != 0) {
+                tempSpeed = 0.709 * playerSpeed;//for diagonal movement
+            }
+            this.player.setVelocityX(horz * tempSpeed);
+            this.player.setVelocityY(vert * tempSpeed);
+    
+            //attack
+            if (Phaser.Input.Keyboard.JustDown(this.shootKey)) {
+                this.swordGroup.shootBeam(this.player.x, this.player.y - 60);
             }
         }
-        if (this.cursors.left.isDown) {
-            horz = -1;
-        } else {
-            if (this.cursors.right.isDown) {
-                horz = 1;
-            }
-        }
-        if (horz != 0 && vert != 0) {
-            tempSpeed = 0.709 * playerSpeed;//for diagonal movement
-        }
-        this.player.setVelocityX(horz * tempSpeed);
-        this.player.setVelocityY(vert * tempSpeed);
 
-        //attack
-        if (Phaser.Input.Keyboard.JustDown(this.shootKey)) {
-            this.swordGroup.shootBeam(this.player.x, this.player.y - 60);
+        if (this.pingPong != 0) {
+            this.player.alpha += 0.025 * this.pingPong;
+            if (this.player.alpha >= 1) {
+                this.pingPong = -1;
+            } else {
+                if (this.player.alpha <= 0) {
+                    this.pingPong = 1;
+                }
+            }
         }
     }
 
@@ -84,5 +104,43 @@ class Play extends Phaser.Scene {
         obj.bullet = this.plugins.get('rexbulletplugin').add(obj, {
             speed: moveSpeed
         });
+    }
+
+    spawnWave(num) {
+        switch(num) {
+            case 1 : 
+                this.scoutGroup.spawn(520, 100, this, 50);
+                break;
+
+            default :
+                console.log("spawn error");
+        }
+        this.spawnTrack++;
+    }
+
+    playerHurt() {
+        if (this.damageable) {
+            if (lives <= 0) {
+                //game over stuff
+                //console.log("game over");
+            }
+            lives--;
+            this.actionable = false;
+            this.damageable = false;
+            this.player.alpha = 0;
+            this.player.body.setVelocityX(0);
+            this.player.body.setVelocityY(0);
+    
+            this.recover = this.time.delayedCall(450, () => {
+                this.actionable = true;
+                this.pingPong = 1;
+            }, null, this);
+
+            this.invincible = this.time.delayedCall(3000, () => {
+                this.damageable = true;
+                this.player.alpha = 1;
+                this.pingPong = 0;
+            }, null, this);
+        }
     }
 }

@@ -29,6 +29,8 @@ let config = {
 let game = new Phaser.Game(config);
 let playerSpeed = 500;
 let swordSpeed = 900;
+let baseDamage = 100;
+let lives = 2;
 
 /* 
 

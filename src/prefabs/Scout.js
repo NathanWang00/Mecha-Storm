@@ -3,6 +3,10 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
         super(scene, 0, 0, 'scout');
         scene.add.existing(this);
         scene.physics.add.existing(this);
+
+        //initial variables
+        this.health = 1;
+
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;
@@ -16,9 +20,25 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
         this.setAngle(90);
     }
 
-    hit() {
+    preUpdate(time, delta) {
+        super.preUpdate(time, delta);
+        //this.bullet.speed += 100 * delta / 60;
+    }
+
+    hit(damage) {
         if (this.active) {
-            console.log("test");
+            this.health -= damage;
+            if (this.health <= 0) {
+                this.death();
+            }
+            console.log(damage);
         }
+    }
+
+    death() {
+        this.body.reset(0, 0);
+        this.setActive(false);
+        this.setVisible(false);
+        this.body.enable = false;
     }
 }

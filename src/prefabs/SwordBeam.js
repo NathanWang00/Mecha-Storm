@@ -3,6 +3,8 @@ class SwordBeam extends Phaser.Physics.Arcade.Sprite {
         super(scene, 0, 0, 'swordBeam');
         scene.add.existing(this);
         scene.physics.add.existing(this);
+        this.damage = baseDamage;
+
         this.stop();
     }
 
@@ -22,6 +24,10 @@ class SwordBeam extends Phaser.Physics.Arcade.Sprite {
     hit() {
         this.body.reset(0, 0);//for debug
         this.stop();
+    }
+
+    getDamage() {
+        return this.damage;
     }
 
     start() {
