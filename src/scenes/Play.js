@@ -13,10 +13,19 @@ class Play extends Phaser.Scene {
         this.load.plugin('rexbulletplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexbulletplugin.min.js', true);
         this.load.plugin('rexmovetoplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexmovetoplugin.min.js', true);//for move to
 
+        //SFX load
+        this.load.audio('swordBeamFire', ['assets/placeholderSwordShot.wav']);
+        this.load.audio('gunShot', ['assets/placeholderGunShot.wav']);
+        this.load.audio('explosionSfx', ['assets/placeholderExplosion.wav']);
     }
 
     create() {
         this.cameras.main.setBackgroundColor('#FFFFFF');
+
+        //Game Audio
+        this.swordBeamFire = this.sound.add('swordBeamFire');
+        this.gunShot = this.sound.add('gunShot');
+        this.explosionSfx = this.sound.add('explosionSfx');
 
         // player 
         this.player = this.physics.add.sprite(520, 650, 'player');
@@ -111,6 +120,7 @@ class Play extends Phaser.Scene {
     
             // attack
             if (Phaser.Input.Keyboard.JustDown(this.shootKey)) {
+                this.swordBeamFire.play();//Fire sfx
                 this.swordGroup.shootBeam(this.player.x, this.player.y - 60);
             }
 
@@ -127,6 +137,7 @@ class Play extends Phaser.Scene {
             }
 
             if (Phaser.Input.Keyboard.JustUp(this.gunKey)) {
+                this.gunShot.play();//Gunshot sfx
                 var convertedAngle = Phaser.Math.DegToRad(this.gun.angle-90);
                 var gunOffset = 70;
                 this.tracerGroup.shootTracer(this.gun.x + gunOffset * Math.cos(convertedAngle), this.gun.y + gunOffset * Math.sin(convertedAngle), this, this.gun.angle-90);
