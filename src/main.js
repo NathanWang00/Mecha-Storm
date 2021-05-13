@@ -29,15 +29,19 @@ let config = {
 let game = new Phaser.Game(config);
 let playerSpeed = 560;
 let swordSpeed = 700;
+let tracerSpeed = 2000;
 let baseDamage = 100;
+let tracerDamage = 500;
 let lives = 2;
 let focusModifier = 0.6;
+let gunFollowSpeed = 400;
+let gunFocusSpeed = 800;
 
 /* 
 
 NOTES FOR THE GRADERS OF CMPM-120-1, PROFESSOR ADAM SMITH:
 
-- Used the "rexbullet plugin" by Rex under the MIT License. Source: https://github.com/rexrainbow/phaser3-rex-notes/
+- Used the "rexbullet and rexmoveto plugin" by Rex under the MIT License. Source: https://github.com/rexrainbow/phaser3-rex-notes/
 
 
 */
