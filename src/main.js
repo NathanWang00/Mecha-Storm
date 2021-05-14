@@ -37,6 +37,7 @@ let focusModifier = 0.6;
 let gunFollowSpeed = 400;
 let gunFocusSpeed = 800;
 
+
 /* 
 
 NOTES FOR THE GRADERS OF CMPM-120-1, PROFESSOR ADAM SMITH:

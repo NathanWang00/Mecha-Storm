@@ -12,6 +12,7 @@ class Play extends Phaser.Scene {
         this.load.image('tracer', './assets/Tracer.png');
         this.load.plugin('rexbulletplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexbulletplugin.min.js', true);
         this.load.plugin('rexmovetoplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexmovetoplugin.min.js', true);//for move to
+        this.load.atlas('swordTexture', './assets/swordTexture.png', './assets/swordTexture.json');
 
         //SFX load
         this.load.audio('swordBeamFire', ['assets/placeholderSwordShot.wav']);
@@ -36,9 +37,9 @@ class Play extends Phaser.Scene {
         this.player.body.setSize(54, 54, true);
 
         // gun
-        this.gun = this.physics.add.sprite(this.player.x - 50, this.player.y - 70, 'gun');
-        this.gun.targetX = this.player.x - 50;
-        this.gun.targetY = this.player.y - 70;
+        this.gun = this.physics.add.sprite(this.player.x - 40, this.player.y - 50, 'gun');
+        this.gun.targetX = this.player.x - 40;
+        this.gun.targetY = this.player.y - 50;
         this.enableMoveTo(this.gun, this.gun.targetX, this.gun.targetY, gunFollowSpeed, false);
         // make gun floaty, switch to over side if player is on edge, accelerate based on distance
 
@@ -57,6 +58,45 @@ class Play extends Phaser.Scene {
 
         // Sword pool
         this.swordGroup = new SwordGroup(this);
+
+        // Sword animations
+        this.anims.create({ 
+            key: 'slashAnim', 
+            frames: this.anims.generateFrameNames('swordTexture', {
+                start: 1,
+                end: 3,
+                zeroPad: 1,
+                prefix: 'slash',
+                suffix: '.gif'
+            }),
+            frameRate: 18, 
+            repeat: 0
+        });
+
+        this.anims.create({ 
+            key: 'powerSlashAnim', 
+            frames: this.anims.generateFrameNames('swordTexture', {
+                start: 1,
+                end: 3,
+                zeroPad: 1,
+                prefix: 'powerSlash',
+                suffix: '.png'
+            }),
+            frameRate: 18, 
+            repeat: -1
+        });
+
+        this.sword = this.physics.add.sprite(this.player.x, this.player.y - 75, 'slash');
+        this.sword.setSize(50, 40);
+        this.sword.setOffset(15, 35);
+        this.sword.anims.play('slashAnim');
+        this.sword.anims.pause();
+        this.sword.reverse = false;
+
+        this.sword.targetX = this.player.x;
+        this.sword.targetY = this.player.y - 75;
+        this.enableMoveTo(this.sword, this.sword.targetX, this.sword.targetY, 1000, false);
+
 
         // player bullet
         this.tracerGroup = new TracerGroup(this);
@@ -120,6 +160,13 @@ class Play extends Phaser.Scene {
     
             // attack
             if (Phaser.Input.Keyboard.JustDown(this.shootKey)) {
+                if (this.sword.reverse) {
+                    this.sword.anims.playReverse('slashAnim');
+                    this.sword.reverse = false;
+                } else {
+                    this.sword.anims.play('slashAnim');
+                    this.sword.reverse = true;
+                }
                 this.swordBeamFire.play();//Fire sfx
                 this.swordGroup.shootBeam(this.player.x, this.player.y - 60);
             }
@@ -148,11 +195,13 @@ class Play extends Phaser.Scene {
             if (Phaser.Input.Keyboard.JustDown(this.focusKey)) {
                 this.focus = focusModifier;
                 this.gun.moveTo.speed = gunFocusSpeed;
+                this.sword.moveTo.speed = 1000;
             }
             if (Phaser.Input.Keyboard.JustUp(this.focusKey)) {
                 this.focus = 1;
                 this.gun.moveTo.speed = gunFollowSpeed;
                 this.gun.angle = 0;
+                this.sword.moveTo.speed = 1000;
             }
         }
 
@@ -171,10 +220,13 @@ class Play extends Phaser.Scene {
         this.hitbox.x = this.player.x;
         this.hitbox.y = this.player.y;
 
-        // gun follow player
-        this.gun.targetX = this.player.x - 50;
-        this.gun.targetY = this.player.y - 70;
+        // gun and sword follow player
+        this.gun.targetX = this.player.x - 40;
+        this.gun.targetY = this.player.y - 50;
         this.gun.moveTo.moveTo(this.gun.targetX, this.gun.targetY);
+        this.sword.targetX = this.player.x;
+        this.sword.targetY = this.player.y - 75;
+        this.sword.moveTo.moveTo(this.sword.targetX, this.sword.targetY);
     }
 
     enableBullet(obj, moveSpeed) {

@@ -10,6 +10,7 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;
+        this.scene = scene;
     }
 
     spawn(x, y) {
@@ -22,6 +23,9 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
+        if (this.y > this.height + game.config.height) {
+            this.death();
+        }
         //this.bullet.speed += 100 * delta / 60;
     }
 
@@ -30,6 +34,7 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
             this.health -= damage;
             if (this.health <= 0) {
                 this.death();
+                this.scene.explosionSfx.play();
             }
             console.log(damage);
         }

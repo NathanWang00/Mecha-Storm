@@ -1,0 +1,145 @@
+{
+	"textures": [
+		{
+			"image": "swordTexture.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 138,
+				"h": 112
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "powerSlash2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 76,
+						"h": 84
+					},
+					"spriteSourceSize": {
+						"x": 13,
+						"y": 24,
+						"w": 62,
+						"h": 58
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 62,
+						"h": 58
+					}
+				},
+				{
+					"filename": "powerSlash1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 76,
+						"h": 84
+					},
+					"spriteSourceSize": {
+						"x": 50,
+						"y": 20,
+						"w": 26,
+						"h": 64
+					},
+					"frame": {
+						"x": 62,
+						"y": 0,
+						"w": 26,
+						"h": 64
+					}
+				},
+				{
+					"filename": "slash1.gif",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 76,
+						"h": 84
+					},
+					"spriteSourceSize": {
+						"x": 51,
+						"y": 33,
+						"w": 24,
+						"h": 50
+					},
+					"frame": {
+						"x": 0,
+						"y": 58,
+						"w": 24,
+						"h": 50
+					}
+				},
+				{
+					"filename": "powerSlash3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 76,
+						"h": 84
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 60,
+						"w": 62,
+						"h": 24
+					},
+					"frame": {
+						"x": 24,
+						"y": 64,
+						"w": 62,
+						"h": 24
+					}
+				},
+				{
+					"filename": "slash2.gif",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 76,
+						"h": 84
+					},
+					"spriteSourceSize": {
+						"x": 17,
+						"y": 29,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 86,
+						"y": 64,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "slash3.gif",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 76,
+						"h": 84
+					},
+					"spriteSourceSize": {
+						"x": 13,
+						"y": 59,
+						"w": 50,
+						"h": 24
+					},
+					"frame": {
+						"x": 88,
+						"y": 0,
+						"w": 50,
+						"h": 24
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "http://free-tex-packer.com",
+		"version": "0.6.6"
+	}
+}
