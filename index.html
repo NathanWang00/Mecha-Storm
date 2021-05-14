@@ -9,8 +9,13 @@
         body {
             background-color: rgb(53, 53, 58);
         }
-    </style>
 
+        @font-face {
+            font-family: pixelfont;
+            src: url('./assets/pixelfont7.ttf');
+        }
+    </style>
+    <div style="font-family: pixelfont; position: absolute; left: -1000px; visibility: hidden;">.</div>
     <script src ="./lib/phaser.js"></script>
     <script src ="./src/prefabs/SwordBeam.js"></script>
     <script src ="./src/prefabs/SwordGroup.js"></script>
