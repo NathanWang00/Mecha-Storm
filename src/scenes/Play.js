@@ -254,7 +254,7 @@ class Play extends Phaser.Scene {
             default :
                 console.log("spawn error");
         }
-        this.spawnTrack++;
+        //this.spawnTrack++;
     }
 
     playerHurt() {
