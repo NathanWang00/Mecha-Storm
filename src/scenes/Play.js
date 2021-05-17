@@ -4,11 +4,12 @@ class Play extends Phaser.Scene {
     }
 
     preload() {
+        this.load.image('ammo', './assets/Ammo.png');
         this.load.image('player', './assets/Player.png');
         this.load.image('hitbox', './assets/PlayerHitbox.png');
-        this.load.image('swordBeam', './assets/TempSwordBeam.png');
         this.load.image('scout', './assets/Scout.png');
         this.load.image('gun', './assets/GunIdle.png');
+        this.load.image('swordBeam', './assets/TempSwordBeam.png');
         this.load.image('tracer', './assets/Tracer.png');
         this.load.image('basicBullet', './assets/EnemyBullet.png');
         this.load.plugin('rexbulletplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexbulletplugin.min.js', true);
@@ -38,6 +39,8 @@ class Play extends Phaser.Scene {
         this.player.body.setSize(54, 54, true);
 
         this.lives = lives;
+        this.ammo = baseAmmo;
+        this.maxAmmo = baseAmmo;
 
         // gun
         this.gun = this.physics.add.sprite(this.player.x - 40, this.player.y - 50, 'gun');
@@ -59,6 +62,9 @@ class Play extends Phaser.Scene {
         // Enemy groups
         this.scoutGroup = new ScoutGroup(this);
         this.basicBulletGroup = new BasicBulletGroup(this);
+
+        // Pickups
+        this.ammoGroup = new AmmoGroup(this);
 
         // Sword pool
         this.swordGroup = new SwordGroup(this);
@@ -132,6 +138,11 @@ class Play extends Phaser.Scene {
         this.physics.add.overlap(this.scoutGroup, this.hitbox, this.playerHurt, null, this);
         this.physics.add.overlap(this.hitbox, this.basicBulletGroup, this.playerHurt, null, this);
 
+        this.physics.add.overlap(this.player, this.ammoGroup, function (player, ammoGroup)
+        {
+            ammoGroup.hit();
+        })
+
         // Spawning
         this.spawnTrack = 1;
         this.spawnWave();
@@ -191,12 +202,13 @@ class Play extends Phaser.Scene {
                 }
             }
 
-            if (Phaser.Input.Keyboard.JustUp(this.gunKey)) {
+            if (Phaser.Input.Keyboard.JustUp(this.gunKey) && this.ammo > 0) {
                 this.gunShot.play();//Gunshot sfx
                 var convertedAngle = Phaser.Math.DegToRad(this.gun.angle-90);
                 var gunOffset = 70;
                 this.tracerGroup.shootTracer(this.gun.x + gunOffset * Math.cos(convertedAngle), this.gun.y + gunOffset * Math.sin(convertedAngle), this, this.gun.angle-90);
-
+                this.ammo--;
+                console.log(this.ammo);
             }
 
             // gun focus
@@ -291,7 +303,6 @@ class Play extends Phaser.Scene {
 
     playerHurt() {
         if (this.damageable) {
-            console.log("hurt");
             this.actionable = false;
             this.damageable = false;
             this.player.alpha = 0;

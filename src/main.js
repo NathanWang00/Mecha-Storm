@@ -36,6 +36,7 @@ let lives = 2;
 let focusModifier = 0.6;
 let gunFollowSpeed = 400;
 let gunFocusSpeed = 800;
+let baseAmmo = 5;
 
 let scoutHealth = 101;
 let basicBulletSpeed = 250;

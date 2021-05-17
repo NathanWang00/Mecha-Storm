@@ -27,7 +27,6 @@ class SwordBeam extends Phaser.Physics.Arcade.Sprite {
     hit(obj) {
         if (this.piercing) {
             if (!this.hitArray.includes(obj)) {
-                console.log(this.hitArray);
                 this.hitArray.push(obj)
                 this.lastHit = obj;
                 return true;
