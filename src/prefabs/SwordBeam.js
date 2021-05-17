@@ -4,6 +4,9 @@ class SwordBeam extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.damage = baseDamage;
+        this.piercing = true;
+        this.lastHit = null; //for piercing
+        this.hitArray = [];
 
         this.stop();
     }
@@ -21,9 +24,21 @@ class SwordBeam extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    hit() {
-        this.body.reset(0, 0);//for debug
-        this.stop();
+    hit(obj) {
+        if (this.piercing) {
+            if (!this.hitArray.includes(obj)) {
+                console.log(this.hitArray);
+                this.hitArray.push(obj)
+                this.lastHit = obj;
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            this.body.reset(0, 0);//for debug
+            this.stop();
+            return true;
+        }
     }
 
     getDamage() {
@@ -40,5 +55,6 @@ class SwordBeam extends Phaser.Physics.Arcade.Sprite {
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;
+        this.hitArray = [];
     }
 }

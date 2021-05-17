@@ -5,7 +5,7 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
 
         //initial variables
-        this.health = 1;
+        this.health = scoutHealth;
 
         this.setActive(false);
         this.setVisible(false);
@@ -19,6 +19,7 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
         this.setActive(true);
         this.setVisible(true);
         this.setAngle(90);
+        this.health = scoutHealth;
     }
 
     preUpdate(time, delta) {
@@ -33,6 +34,7 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
         if (this.active) {
             this.health -= damage;
             if (this.health <= 0) {
+                this.scene.spawnBasic(this.x, this.y, this.scene, null);
                 this.death();
                 this.scene.explosionSfx.play();
             }

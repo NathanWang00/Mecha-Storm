@@ -10,6 +10,7 @@ class Play extends Phaser.Scene {
         this.load.image('scout', './assets/Scout.png');
         this.load.image('gun', './assets/GunIdle.png');
         this.load.image('tracer', './assets/Tracer.png');
+        this.load.image('basicBullet', './assets/EnemyBullet.png');
         this.load.plugin('rexbulletplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexbulletplugin.min.js', true);
         this.load.plugin('rexmovetoplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexmovetoplugin.min.js', true);//for move to
         this.load.atlas('swordTexture', './assets/swordTexture.png', './assets/swordTexture.json');
@@ -36,6 +37,8 @@ class Play extends Phaser.Scene {
         this.pingPong = 0; // logic for flickering sprite
         this.player.body.setSize(54, 54, true);
 
+        this.lives = lives;
+
         // gun
         this.gun = this.physics.add.sprite(this.player.x - 40, this.player.y - 50, 'gun');
         this.gun.targetX = this.player.x - 40;
@@ -55,6 +58,7 @@ class Play extends Phaser.Scene {
 
         // Enemy groups
         this.scoutGroup = new ScoutGroup(this);
+        this.basicBulletGroup = new BasicBulletGroup(this);
 
         // Sword pool
         this.swordGroup = new SwordGroup(this);
@@ -116,8 +120,9 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.player, this.rect2);
         this.physics.add.overlap(this.scoutGroup, this.swordGroup, function (scout, swordBeam)
         {
-            swordBeam.hit();
-            scout.hit(swordBeam.getDamage());
+            if(swordBeam.active && swordBeam.hit(scout)) {
+                scout.hit(swordBeam.getDamage());
+            }
         });
         this.physics.add.overlap(this.scoutGroup, this.tracerGroup, function (scout, tracer)
         {
@@ -125,10 +130,11 @@ class Play extends Phaser.Scene {
             scout.hit(tracer.getDamage());
         });
         this.physics.add.overlap(this.scoutGroup, this.hitbox, this.playerHurt, null, this);
+        this.physics.add.overlap(this.hitbox, this.basicBulletGroup, this.playerHurt, null, this);
 
         // Spawning
         this.spawnTrack = 1;
-        this.spawnWave(this.spawnTrack);
+        this.spawnWave();
     }
 
     update() {
@@ -180,6 +186,8 @@ class Play extends Phaser.Scene {
                     var closeAngle = Phaser.Math.Angle.BetweenPoints({x: this.gun.x, y: this.gun.y}, {x: this.closestEnemy.x, y: this.closestEnemy.y});
                     closeAngle = Phaser.Math.RadToDeg(closeAngle);
                     this.gun.angle = closeAngle + 90;
+                } else {
+                    this.gun.angle = 0;
                 }
             }
 
@@ -243,31 +251,60 @@ class Play extends Phaser.Scene {
         obj.moveTo.moveTo(xPos, yPos);
     }
 
-    spawnWave(num) {
-        switch(num) {
+    spawnWave() {
+        switch(this.spawnTrack) {
             case 1 : 
-                this.scoutGroup.spawn(520, 100, this, 50);
-                this.scoutGroup.spawn(320, 100, this, 50);
-                this.scoutGroup.spawn(720, 100, this, 50);
+                this.scoutGroup.spawn(520, -50, this, 50);
+                this.scoutGroup.spawn(320, -50, this, 50);
+                this.scoutGroup.spawn(720, -50, this, 50);
+                this.spawnTrack++;
+                break;
+
+            case 2 :
+                this.scoutGroup.spawn(370, -50, this, 50);
+                this.scoutGroup.spawn(670, -50, this, 50);
+                this.spawnTrack--;
                 break;
 
             default :
                 console.log("spawn error");
         }
-        //this.spawnTrack++;
+
+        // repeat the wave for testing
+        this.spawn = this.time.delayedCall(2000, this.spawnWave, null, this);
+        
+    }
+
+    angToPlayer(x, y) {
+        var ang = Phaser.Math.Angle.BetweenPoints({x: x, y: y}, {x: this.player.x, y: this.player.y});
+        ang = Phaser.Math.RadToDeg(ang);
+        return ang;
+    }
+
+    spawnBasic(x, y, scene, angle) {
+        if (angle == null) {
+            this.basicBulletGroup.shootBullet(x, y, scene, this.angToPlayer(x, y));
+        } else {
+            this.basicBulletGroup.shootBullet(x, y, scene, angle);
+        }
     }
 
     playerHurt() {
         if (this.damageable) {
+            console.log("hurt");
             this.actionable = false;
             this.damageable = false;
             this.player.alpha = 0;
             this.player.body.setVelocityX(0);
             this.player.body.setVelocityY(0);
 
-            if (lives <= 0) {
+            if (this.lives <= 0) {
                 //game over stuff
                 console.log("game over");
+                this.registry.destroy();
+                this.events.off();
+                this.scene.restart();   
+                //this.scene.start("menuScene");  
             } else {
                 this.recover = this.time.delayedCall(450, () => {
                     this.actionable = true;
@@ -280,7 +317,7 @@ class Play extends Phaser.Scene {
                     this.pingPong = 0;
                 }, null, this);
             }
-            lives--;
+            this.lives--;
         }
     }
 

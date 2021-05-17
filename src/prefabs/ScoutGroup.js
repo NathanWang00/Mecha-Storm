@@ -5,7 +5,7 @@ class ScoutGroup extends Phaser.Physics.Arcade.Group
 
         this.createMultiple({
             classType: Scout,
-            frameQuantity: 12,
+            frameQuantity: 30,
             active: false,
             visible: false,
             runChildUpdate: true,
