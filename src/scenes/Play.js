@@ -202,7 +202,7 @@ class Play extends Phaser.Scene {
                 }
             }
 
-            if (Phaser.Input.Keyboard.JustUp(this.gunKey) && this.ammo > 0) {
+            if (Phaser.Input.Keyboard.JustDown(this.gunKey) && this.ammo > 0) {
                 this.gunShot.play();//Gunshot sfx
                 var convertedAngle = Phaser.Math.DegToRad(this.gun.angle-90);
                 var gunOffset = 70;
@@ -298,6 +298,16 @@ class Play extends Phaser.Scene {
             this.basicBulletGroup.shootBullet(x, y, scene, this.angToPlayer(x, y));
         } else {
             this.basicBulletGroup.shootBullet(x, y, scene, angle);
+        }
+    }
+
+    spawnAmmo(x, y, chance) {
+        if(this.ammo < this.maxAmmo) {
+            if (Phaser.Math.Between(0, 1) <= chance) {
+                this.ammoGroup.spawn(x, y);
+            }
+        } else {
+            //give power
         }
     }
 

@@ -23,7 +23,11 @@ class Ammo extends Phaser.Physics.Arcade.Sprite {
 
     hit() {
         this.body.reset(0, 0);//for debug
-        this.scene.ammo++;
+        if (this.scene.ammo < this.scene.maxAmmo) {
+            this.scene.ammo++;
+        } else {
+            //give power
+        }
         console.log(this.scene.ammo);
         this.stop();
     }

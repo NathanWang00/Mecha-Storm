@@ -43,7 +43,7 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
     }
 
     death() {
-        this.scene.ammoGroup.spawn(this.x, this.y);
+        this.scene.spawnAmmo(this.x, this.y, 0.5);
         this.body.reset(0, 0);
         this.setActive(false);
         this.setVisible(false);
