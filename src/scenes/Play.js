@@ -126,8 +126,9 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.player, this.rect2);
         this.physics.add.overlap(this.scoutGroup, this.swordGroup, function (scout, swordBeam)
         {
+            var tempDamage = swordBeam.getDamage();
             if(swordBeam.active && swordBeam.hit(scout)) {
-                scout.hit(swordBeam.getDamage());
+                scout.hit(tempDamage);
             }
         });
         this.physics.add.overlap(this.scoutGroup, this.tracerGroup, function (scout, tracer)
