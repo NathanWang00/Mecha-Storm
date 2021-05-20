@@ -5,10 +5,12 @@ class Play extends Phaser.Scene {
 
     preload() {
         this.load.image('ammo', './assets/Ammo.png');
+        this.load.image('power', './assets/Power.png')
         this.load.image('player', './assets/Player.png');
         this.load.image('hitbox', './assets/PlayerHitbox.png');
         this.load.image('scout', './assets/Scout.png');
         this.load.image('gun', './assets/GunIdle.png');
+        this.load.image('gunShot', './assets/GunShot.png');
         this.load.image('swordBeam', './assets/TempSwordBeam.png');
         this.load.image('tracer', './assets/Tracer.png');
         this.load.image('basicBullet', './assets/EnemyBullet.png');
@@ -43,6 +45,7 @@ class Play extends Phaser.Scene {
         this.ammo = baseAmmo;
         this.maxAmmo = baseAmmo;
         this.swung = false;
+        this.power = 0;
 
         // gun
         this.gun = this.physics.add.sprite(this.player.x - 40, this.player.y - 50, 'gun');
@@ -67,6 +70,7 @@ class Play extends Phaser.Scene {
 
         // Pickups
         this.ammoGroup = new AmmoGroup(this);
+        this.powerGroup = new PowerGroup(this);
 
         // Sword pool
         this.swordGroup = new SwordGroup(this);
@@ -148,6 +152,11 @@ class Play extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.ammoGroup, function (player, ammoGroup)
         {
             ammoGroup.hit();
+        })
+
+        this.physics.add.overlap(this.player, this.powerGroup, function (player, powerGroup)
+        {
+            powerGroup.hit();
         })
 
         // Spawning
@@ -317,13 +326,40 @@ class Play extends Phaser.Scene {
         }
     }
 
+    spawnPickup(x, y, power, ammo) {
+        var spawnCode = this.spawnAmmo(x, y, ammo);
+        if (spawnCode == -1){
+            this.spawnPower(x, y, power, false);
+        } else {
+            this.spawnPower(x, y, power + spawnCode, true);
+        }
+    }
+
     spawnAmmo(x, y, chance) {
         if(this.ammo < this.maxAmmo) {
             if (Phaser.Math.Between(0, 1) <= chance) {
-                this.ammoGroup.spawn(x, y);
+                this.ammoGroup.spawn(Phaser.Math.Between(-10, 10) + x,Phaser.Math.Between(-10, 10) + y);
+                return -1;
+            }
+            else {
+                return 0;
             }
         } else {
-            //give power
+            return Phaser.Math.Between(0, 1);
+        }
+    }
+
+    spawnPower(x, y, amount, center) {
+        var randAngOffset = Phaser.Math.Between(0, 360);
+        if (amount > 1 || center == false) {
+            for (let index = 0; index < amount; index++) {
+                var angle = Phaser.Math.DegToRad(Phaser.Math.Between(-20, 20) + (360/amount) * index + randAngOffset);
+                var distance = Phaser.Math.Between(10, 40) + amount * 4;
+    
+                this.powerGroup.spawn(Math.cos(angle) * distance + x, Math.sin(angle) * distance + y);
+            }
+        } else {
+            this.powerGroup.spawn(Phaser.Math.Between(-10, 10) + x,Phaser.Math.Between(-10, 10) + y);
         }
     }
 
