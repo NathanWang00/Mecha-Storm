@@ -27,7 +27,8 @@ class SwordBeam extends Phaser.Physics.Arcade.Sprite {
         if (this.active) {
             this.damage -= swordDecay * delta / 60;
             //console.log(this.body.velocity.y);
-            this.setVelocityY(this.body.velocity.y + 35 * delta / 60);
+            this.setVelocityY(this.body.velocity.y + 45 * delta / 60);
+            this.alpha = (this.damage / baseDamage) + 0.05;
             if(this.damage <= 0) {
                 this.body.reset(0, 0);//for debug
                 this.stop();

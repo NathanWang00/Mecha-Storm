@@ -15,6 +15,7 @@ class Play extends Phaser.Scene {
         this.load.plugin('rexbulletplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexbulletplugin.min.js', true);
         this.load.plugin('rexmovetoplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexmovetoplugin.min.js', true);//for move to
         this.load.atlas('swordTexture', './assets/swordTexture.png', './assets/swordTexture.json');
+        this.load.image('crosshair', './assets/Crosshair.png');
 
         //SFX load
         this.load.audio('swordBeamFire', ['assets/placeholderSwordShot.wav']);
@@ -41,6 +42,7 @@ class Play extends Phaser.Scene {
         this.lives = lives;
         this.ammo = baseAmmo;
         this.maxAmmo = baseAmmo;
+        this.swung = false;
 
         // gun
         this.gun = this.physics.add.sprite(this.player.x - 40, this.player.y - 50, 'gun');
@@ -112,6 +114,10 @@ class Play extends Phaser.Scene {
         this.tracerGroup = new TracerGroup(this);
         this.closestEnemy = null;
 
+        // crosshair
+        this.crosshair = this.add.sprite(200, 200, 'crosshair');
+        this.crosshair.alpha = 0;
+
         // temp UI border
         this.rect1 = this.add.rectangle(0, 0, 180, 720, 0x000000).setOrigin(0, 0);
         this.rect2 = this.add.rectangle(900, 0, 180, 720, 0x000000).setOrigin(0, 0);
@@ -149,7 +155,7 @@ class Play extends Phaser.Scene {
         this.spawnWave();
     }
 
-    update() {
+    update(time, delta) {
         let horz = 0;
         let vert = 0;
         let tempSpeed = playerSpeed;
@@ -177,7 +183,7 @@ class Play extends Phaser.Scene {
             this.player.setVelocityY(vert * tempSpeed * this.focus);
     
             // attack
-            if (Phaser.Input.Keyboard.JustDown(this.shootKey)) {
+            if (this.shootKey.isDown && !this.swung) {
                 if (this.sword.reverse) {
                     this.sword.anims.playReverse('slashAnim');
                     this.sword.reverse = false;
@@ -185,6 +191,10 @@ class Play extends Phaser.Scene {
                     this.sword.anims.play('slashAnim');
                     this.sword.reverse = true;
                 }
+                this.swung = true;
+                this.recover = this.time.delayedCall(swingSpeed, () => {
+                    this.swung = false;
+                }, null, this);
                 this.swordBeamFire.play();//Fire sfx
                 this.swordGroup.shootBeam(this.player.x, this.player.y - 60);
             }
@@ -198,8 +208,12 @@ class Play extends Phaser.Scene {
                     var closeAngle = Phaser.Math.Angle.BetweenPoints({x: this.gun.x, y: this.gun.y}, {x: this.closestEnemy.x, y: this.closestEnemy.y});
                     closeAngle = Phaser.Math.RadToDeg(closeAngle);
                     this.gun.angle = closeAngle + 90;
+                    this.crosshair.setPosition(this.closestEnemy.x, this.closestEnemy.y);
+                    this.crosshair.angle += 5 * delta / 60;
+                    this.crosshair.alpha += 0.35 * delta /60;
                 } else {
                     this.gun.angle = 0;
+                    this.crosshair.alpha = 0;
                 }
             }
 
@@ -223,6 +237,7 @@ class Play extends Phaser.Scene {
                 this.gun.moveTo.speed = gunFollowSpeed;
                 this.gun.angle = 0;
                 this.sword.moveTo.speed = 1000;
+                this.crosshair.alpha = 0;
             }
         }
 
