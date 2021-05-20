@@ -7,6 +7,7 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
         //initial variables
         this.health = scoutHealth;
 
+        this.setSize(50, 50);
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;
