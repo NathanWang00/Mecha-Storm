@@ -139,23 +139,32 @@ class Play extends Phaser.Scene {
         // ui backgrounds
         this.backgroundPanel1 = this.add.image(90, 360, 'backgroundPanel');
         this.backgroundPanel2 = this.add.image(990, 360, 'backgroundPanel');
-        this.healthPanel = this.add.image(88, 63, 'healthPanel');
-        this.swordPanel = this.add.image(88, 185.5, 'swordPanel');
-        this.gunPanel = this.add.image(88, 352, 'gunPanel');
+        this.healthPanel = this.add.image(90, 63, 'healthPanel');
+        this.swordPanel = this.add.image(90, 185.5, 'swordPanel');
+        this.gunPanel = this.add.image(90, 352, 'gunPanel');
 
-        // ammo counter
+        // health display
 
         let playConfig = {
 
             fontFamily: 'pixelfont',
-            fontSize: '40px',
+            fontSize: '20px',
             color: '#FFFFFF',
             stroke: '#213136',
-            strokeThickness: 4,
+            strokeThickness: 2,
             align: 'center'
 
         }
 
+        playConfig.color = '#213136';
+        this.ammoCount = this.add.text(90 + 2, 40 + 2, "HEALTH", playConfig).setOrigin(0.5);
+        playConfig.color = '#89cae0';
+        this.ammoCountShadow = this.add.text(90, 40, "HEALTH", playConfig).setOrigin(0.5);
+
+        // ammo counter
+
+        playConfig.fontSize = '40px';
+        playConfig.strokeThickness = 4;
         playConfig.color = '#213136';
         this.ammoCount = this.add.text(101 + 2, 409 + 2, baseAmmo, playConfig).setOrigin(0.5);
         playConfig.color = '#e8b046';
