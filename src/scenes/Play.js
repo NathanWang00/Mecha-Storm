@@ -18,6 +18,10 @@ class Play extends Phaser.Scene {
         this.load.plugin('rexmovetoplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexmovetoplugin.min.js', true);//for move to
         this.load.atlas('swordTexture', './assets/swordTexture.png', './assets/swordTexture.json');
         this.load.image('crosshair', './assets/Crosshair.png');
+        this.load.image('healthPanel', './assets/HealthPanel.png');
+        this.load.image('swordPanel', './assets/SwordPanel.png');
+        this.load.image('gunPanel', './assets/GunPanel.png');
+        this.load.image('backgroundPanel', './assets/BackgroundPanel.png');
 
         //SFX load
         this.load.audio('swordBeamFire', ['assets/placeholderSwordShot.wav']);
@@ -122,14 +126,20 @@ class Play extends Phaser.Scene {
         this.crosshair = this.add.sprite(200, 200, 'crosshair');
         this.crosshair.alpha = 0;
 
-        // temp UI border
+        // UI
         this.rect1 = this.add.rectangle(0, 0, 180, 720, 0x000000).setOrigin(0, 0);
         this.rect2 = this.add.rectangle(900, 0, 180, 720, 0x000000).setOrigin(0, 0);
-
+        
         this.physics.add.existing(this.rect1, true);
         this.rect1.body.immovable = true;
         this.physics.add.existing(this.rect2, true);
         this.rect2.body.immovable = true;
+
+        this.backgroundPanel1 = this.add.image(90, 360, 'backgroundPanel');
+        this.backgroundPanel2 = this.add.image(990, 360, 'backgroundPanel');
+        this.healthPanel = this.add.image(88, 63, 'healthPanel');
+        this.swordPanel = this.add.image(88, 185.5, 'swordPanel');
+        this.gunPanel = this.add.image(88, 352, 'gunPanel');
 
         // Collisions
         this.physics.add.collider(this.player, this.rect1);
