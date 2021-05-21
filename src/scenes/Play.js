@@ -126,7 +126,7 @@ class Play extends Phaser.Scene {
         this.crosshair = this.add.sprite(200, 200, 'crosshair');
         this.crosshair.alpha = 0;
 
-        // UI
+        // ui physics
         this.rect1 = this.add.rectangle(0, 0, 180, 720, 0x000000).setOrigin(0, 0);
         this.rect2 = this.add.rectangle(900, 0, 180, 720, 0x000000).setOrigin(0, 0);
         
@@ -135,11 +135,31 @@ class Play extends Phaser.Scene {
         this.physics.add.existing(this.rect2, true);
         this.rect2.body.immovable = true;
 
+
+        // ui backgrounds
         this.backgroundPanel1 = this.add.image(90, 360, 'backgroundPanel');
         this.backgroundPanel2 = this.add.image(990, 360, 'backgroundPanel');
         this.healthPanel = this.add.image(88, 63, 'healthPanel');
         this.swordPanel = this.add.image(88, 185.5, 'swordPanel');
         this.gunPanel = this.add.image(88, 352, 'gunPanel');
+
+        // ammo counter
+
+        let playConfig = {
+
+            fontFamily: 'pixelfont',
+            fontSize: '40px',
+            color: '#FFFFFF',
+            stroke: '#213136',
+            strokeThickness: 4,
+            align: 'center'
+
+        }
+
+        playConfig.color = '#213136';
+        this.ammoCount = this.add.text(101 + 2, 409 + 2, baseAmmo, playConfig).setOrigin(0.5);
+        playConfig.color = '#e8b046';
+        this.ammoCountShadow = this.add.text(101, 409, baseAmmo, playConfig).setOrigin(0.5);
 
         // Collisions
         this.physics.add.collider(this.player, this.rect1);
@@ -237,11 +257,13 @@ class Play extends Phaser.Scene {
             }
 
             if (Phaser.Input.Keyboard.JustDown(this.gunKey) && this.ammo > 0) {
-                this.gunShot.play();//Gunshot sfx
+                this.gunShot.play(); //Gunshot sfx
                 var convertedAngle = Phaser.Math.DegToRad(this.gun.angle-90);
                 var gunOffset = 70;
                 this.tracerGroup.shootTracer(this.gun.x + gunOffset * Math.cos(convertedAngle), this.gun.y + gunOffset * Math.sin(convertedAngle), this, this.gun.angle-90);
                 this.ammo--;
+                this.ammoCount.text = this.ammo;
+                this.ammoCountShadow.text = this.ammo;
                 console.log(this.ammo);
             }
 
