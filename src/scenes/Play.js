@@ -24,6 +24,7 @@ class Play extends Phaser.Scene {
         this.load.image('backgroundPanel', './assets/BackgroundPanel.png');
         this.load.image('health', './assets/Heart.png');
         this.load.image('damage', './assets/Damaged.png');
+        this.load.image('powerPanel', './assets/PowerPanel.png');
 
 
         //SFX load
@@ -145,6 +146,7 @@ class Play extends Phaser.Scene {
         this.healthPanel = this.add.image(90, 63, 'healthPanel');
         this.swordPanel = this.add.image(90, 185.5, 'swordPanel');
         this.gunPanel = this.add.image(90, 352, 'gunPanel');
+        this.powerPanel = this.add.image(90, 566, 'powerPanel');
 
         // health display
 
@@ -183,7 +185,6 @@ class Play extends Phaser.Scene {
 
         }
 
-
         // ammo counter
 
         playConfig.fontSize = '40px';
@@ -192,6 +193,22 @@ class Play extends Phaser.Scene {
         this.ammoCount = this.add.text(101 + 2, 409 + 2, baseAmmo, playConfig).setOrigin(0.5);
         playConfig.color = '#e8b046';
         this.ammoCountShadow = this.add.text(101, 409, baseAmmo, playConfig).setOrigin(0.5);
+
+        // power display
+
+        playConfig.fontSize = '20px';
+        playConfig.strokeThickness = 2;
+        playConfig.color = '#213136';
+        this.powerLevel = this.add.text(92 + 2, 692 + 2, "POWER LEVEL", playConfig).setOrigin(0.5);
+        playConfig.color = '#89cae0';
+        this.powerLevelShadow = this.add.text(92, 692, "POWER LEVEL", playConfig).setOrigin(0.5);
+
+
+        this.endCap = this.add.rectangle(82, 658, 16, 4, 0xb686ff).setOrigin(0, 0);
+        this.endCap.alpha = 0;
+        this.powerProgress = this.add.rectangle(78, 658, 24, 0, 0xb686ff).setOrigin(0, 0);
+        this.powerProgress.alpha = 0;
+        
 
         // Collisions
         this.physics.add.collider(this.player, this.rect1);
