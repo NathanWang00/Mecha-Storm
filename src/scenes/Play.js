@@ -22,6 +22,9 @@ class Play extends Phaser.Scene {
         this.load.image('swordPanel', './assets/SwordPanel.png');
         this.load.image('gunPanel', './assets/GunPanel.png');
         this.load.image('backgroundPanel', './assets/BackgroundPanel.png');
+        this.load.image('health', './assets/Heart.png');
+        this.load.image('damage', './assets/Damaged.png');
+
 
         //SFX load
         this.load.audio('swordBeamFire', ['assets/placeholderSwordShot.wav']);
@@ -160,6 +163,26 @@ class Play extends Phaser.Scene {
         this.ammoCount = this.add.text(90 + 2, 40 + 2, "HEALTH", playConfig).setOrigin(0.5);
         playConfig.color = '#89cae0';
         this.ammoCountShadow = this.add.text(90, 40, "HEALTH", playConfig).setOrigin(0.5);
+
+        this.livesArray = [];
+
+        for (let i = 0; i < 3; i++) {
+
+            let life = this.add.sprite(47 + 43 * i, 78, 'health');
+            this.livesArray.push(life);
+
+        }
+
+        this.damagedArray = [];
+
+        for (let i = 0; i < 3; i++) {
+
+            let damage = this.add.sprite(47 + 43 * i, 78, 'damage');
+            damage.alpha = 0;
+            this.damagedArray.push(damage);
+
+        }
+
 
         // ammo counter
 
@@ -431,7 +454,10 @@ class Play extends Phaser.Scene {
                     this.pingPong = 0;
                 }, null, this);
             }
+            this.livesArray[this.lives].destroy();
+            this.damagedArray[this.lives].alpha = 1;
             this.lives--;
+            this.livesArray.pop;
         }
     }
 
