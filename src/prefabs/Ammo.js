@@ -12,6 +12,7 @@ class Ammo extends Phaser.Physics.Arcade.Sprite {
         this.start();
         this.body.reset(x, y);
         this.setVelocityY(-100);
+        this.body.setMaxSpeed(250);
     }
 
     preUpdate(time, delta) {
@@ -37,7 +38,7 @@ class Ammo extends Phaser.Physics.Arcade.Sprite {
         this.body.enable = true;
         this.setActive(true);
         this.setVisible(true);
-        this.setGravityY(100);
+        this.setGravityY(200);
     }
 
     stop() {

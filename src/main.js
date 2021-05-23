@@ -28,9 +28,9 @@ let config = {
 
 let game = new Phaser.Game(config);
 let playerSpeed = 560;
-let swordSpeed = 700;
+let swordSpeed = 600;
 let swingSpeed = 350;
-let tracerSpeed = 2000;
+let tracerSpeed = 1900;
 let baseDamage = 150;
 let tracerDamage = 500;
 let lives = 2;
@@ -40,9 +40,17 @@ let gunFocusSpeed = 800;
 let baseAmmo = 5;
 let swordDecay = 15;
 let powerIncrease = 0.1;
-let basePowerDecrease = 0.01;
+let basePowerDecrease = 0.001;
 let powerLoss = 0.0001;
 let maxPowerLoss = 0.02;
+
+//power upgrades
+let pPlayerSpeed = 650;
+let pSwingSpeed = 275;
+let pSwordDamage = 200;
+let pSwordSpeed = 775;
+let pTracerSpeed = 3500;
+let pTracerDamage = 700;
 
 let debug = true;
 

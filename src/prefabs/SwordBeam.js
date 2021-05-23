@@ -4,6 +4,7 @@ class SwordBeam extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.damage = baseDamage;
+        this.baseDamage = this.baseDamage;
         this.piercing = true;
         this.lastHit = null; //for piercing
         this.hitArray = [];
@@ -13,10 +14,18 @@ class SwordBeam extends Phaser.Physics.Arcade.Sprite {
     }
 
     shoot(x, y) {
-        this.damage = baseDamage;
+        var tempSpeed = swordSpeed;
+        this.baseDamage = baseDamage;
+
+        if (this.scene.powerMode) {
+            this.baseDamage = pSwordDamage;
+            tempSpeed = pSwordSpeed;
+        }
+        this.damage = this.baseDamage;
         this.start();
         this.body.reset(x, y);
-        this.setVelocityY(-swordSpeed);
+
+        this.setVelocityY(-tempSpeed);
     }
 
     preUpdate(time, delta) {
@@ -28,7 +37,7 @@ class SwordBeam extends Phaser.Physics.Arcade.Sprite {
             this.damage -= swordDecay * delta / 60;
             //console.log(this.body.velocity.y);
             this.setVelocityY(this.body.velocity.y + 45 * delta / 60);
-            this.alpha = (this.damage / baseDamage) + 0.05;
+            this.alpha = (this.damage / this.baseDamage) + 0.05;
             if(this.damage <= 0) {
                 this.body.reset(0, 0);//for debug
                 this.stop();

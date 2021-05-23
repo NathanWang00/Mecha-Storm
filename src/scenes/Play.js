@@ -57,6 +57,7 @@ class Play extends Phaser.Scene {
         this.swung = false;
         this.power = 0;
         this.powerMode = false;
+        this.playerSpeed = playerSpeed;
 
         // gun
         this.gun = this.physics.add.sprite(this.player.x - 40, this.player.y - 50, 'gun');
@@ -250,7 +251,8 @@ class Play extends Phaser.Scene {
     update(time, delta) {
         let horz = 0;
         let vert = 0;
-        let tempSpeed = playerSpeed;
+        let tempSpeed = this.playerSpeed;
+
 
         if (this.actionable) {
             // player movement
@@ -269,7 +271,7 @@ class Play extends Phaser.Scene {
                 }
             }
             if (horz != 0 && vert != 0) {
-                tempSpeed = 0.709 * playerSpeed;//for diagonal movement
+                tempSpeed = 0.709 * this.playerSpeed;//for diagonal movement
             }
             this.player.setVelocityX(horz * tempSpeed * this.focus);
             this.player.setVelocityY(vert * tempSpeed * this.focus);
@@ -292,7 +294,11 @@ class Play extends Phaser.Scene {
                     this.sword.reverse = true;
                 }
                 this.swung = true;
-                this.recover = this.time.delayedCall(swingSpeed, () => {
+                var tempSwing = swingSpeed;
+                if (this.powerMode) {
+                    tempSwing = pSwingSpeed;
+                }
+                this.recover = this.time.delayedCall(tempSwing, () => {
                     this.swung = false;
                 }, null, this);
                 this.swordBeamFire.play();//Fire sfx
@@ -359,8 +365,14 @@ class Play extends Phaser.Scene {
                 this.powerMode = true;
                 this.powerDecrease = basePowerDecrease;
                 this.gun.setTexture('gunUpgrade');
-                this.sword.anims.play('powerSlashAnim');
+                if (this.sword.reverse) {
+                    this.sword.anims.playReverse('powerSlashAnim');
+                } else {
+                    this.sword.anims.play('powerSlashAnim');
+                }
                 this.sword.anims.pause();
+
+                this.playerSpeed = pPlayerSpeed;
             }
         }
         if (this.powerMode) {
@@ -375,8 +387,14 @@ class Play extends Phaser.Scene {
                 this.power = 0;
                 this.powerMode = false;
                 this.gun.setTexture('gun');
-                this.sword.anims.play('slashAnim');
+                if (this.sword.reverse) {
+                    this.sword.anims.playReverse('slashAnim');
+                } else {
+                    this.sword.anims.play('slashAnim');
+                }
                 this.sword.anims.pause();
+
+                this.playerSpeed = playerSpeed;
             }
         }
 

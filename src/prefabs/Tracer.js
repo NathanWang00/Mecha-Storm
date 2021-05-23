@@ -4,15 +4,20 @@ class Tracer extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.damage = tracerDamage;
+        this.scene = scene;
 
         this.stop();
     }
 
     shoot(x, y, angle) {
+        var tempDamage = tracerDamage;
+        if (this.scene.powerMode) {
+            tempDamage = pTracerDamage;
+        }
+        this.damage = tempDamage;
         this.angle = angle;
         this.start();
         this.body.reset(x, y);
-        
     }
 
     preUpdate(time, delta) {

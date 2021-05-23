@@ -12,6 +12,7 @@ class Power extends Phaser.Physics.Arcade.Sprite {
         this.start();
         this.body.reset(x, y);
         this.setVelocityY(-100);
+        this.body.setMaxSpeed(250);
     }
 
     preUpdate(time, delta) {
@@ -19,6 +20,10 @@ class Power extends Phaser.Physics.Arcade.Sprite {
         if (this.y > this.height + game.config.height) {
             this.stop();
         }
+        /*if (this.body.velocity > 100) {
+            this.setGravityY(0);
+            console.log("test");
+        }*/
     }
 
     hit() {
@@ -35,7 +40,7 @@ class Power extends Phaser.Physics.Arcade.Sprite {
         this.body.enable = true;
         this.setActive(true);
         this.setVisible(true);
-        this.setGravityY(100);
+        this.setGravityY(200);
     }
 
     stop() {
