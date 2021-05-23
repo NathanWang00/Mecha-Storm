@@ -39,7 +39,12 @@ let gunFollowSpeed = 400;
 let gunFocusSpeed = 800;
 let baseAmmo = 5;
 let swordDecay = 15;
-let powerIncrease = 0.2;
+let powerIncrease = 0.1;
+let basePowerDecrease = 0.01;
+let powerLoss = 0.0001;
+let maxPowerLoss = 0.02;
+
+let debug = true;
 
 let scoutHealth = 50;
 let basicBulletSpeed = 250;

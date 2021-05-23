@@ -40,7 +40,6 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
                 this.death();
                 this.scene.explosionSfx.play();
             }
-            console.log(damage);
         }
     }
 

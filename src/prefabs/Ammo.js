@@ -30,7 +30,6 @@ class Ammo extends Phaser.Physics.Arcade.Sprite {
         } else {
             //give power
         }
-        console.log(this.scene.ammo);
         this.stop();
     }
 

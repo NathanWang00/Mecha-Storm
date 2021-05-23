@@ -10,7 +10,9 @@ class Play extends Phaser.Scene {
         this.load.image('hitbox', './assets/PlayerHitbox.png');
         this.load.image('scout', './assets/Scout.png');
         this.load.image('gun', './assets/GunIdle.png');
+        this.load.image('gunUpgrade', './assets/GunIdleUpgraded.png');
         this.load.image('gunShot', './assets/GunShot.png');
+        this.load.image('gunShotUpgrade', './assets/GunShotUpgraded.png')
         this.load.image('swordBeam', './assets/TempSwordBeam.png');
         this.load.image('tracer', './assets/Tracer.png');
         this.load.image('basicBullet', './assets/EnemyBullet.png');
@@ -54,6 +56,7 @@ class Play extends Phaser.Scene {
         this.maxAmmo = baseAmmo;
         this.swung = false;
         this.power = 0;
+        this.powerMode = false;
 
         // gun
         this.gun = this.physics.add.sprite(this.player.x - 40, this.player.y - 50, 'gun');
@@ -70,7 +73,10 @@ class Play extends Phaser.Scene {
         this.shootKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
         this.focusKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
         this.gunKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
+        this.powerKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.focus = 1;
+
+        this.debugPower = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 
         // Enemy groups
         this.scoutGroup = new ScoutGroup(this);
@@ -107,7 +113,7 @@ class Play extends Phaser.Scene {
                 suffix: '.png'
             }),
             frameRate: 18, 
-            repeat: -1
+            repeat: 0
         });
 
         this.sword = this.physics.add.sprite(this.player.x, this.player.y - 75, 'slash');
@@ -205,9 +211,7 @@ class Play extends Phaser.Scene {
 
 
         this.endCap = this.add.rectangle(82, 658, 16, 4, 0xb686ff).setOrigin(0, 0);
-        this.endCap.alpha = 0;
         this.powerProgress = this.add.rectangle(78, 658, 24, 0, 0xb686ff).setOrigin(0, 0);
-        this.powerProgress.alpha = 0;
         
 
         // Collisions
@@ -273,10 +277,18 @@ class Play extends Phaser.Scene {
             // attack
             if (this.shootKey.isDown && !this.swung) {
                 if (this.sword.reverse) {
-                    this.sword.anims.playReverse('slashAnim');
+                    if (this.powerMode) {
+                        this.sword.anims.playReverse('powerSlashAnim');
+                    } else {
+                        this.sword.anims.playReverse('slashAnim');
+                    }
                     this.sword.reverse = false;
                 } else {
-                    this.sword.anims.play('slashAnim');
+                    if (this.powerMode) {
+                        this.sword.anims.play('powerSlashAnim');
+                    } else {
+                        this.sword.anims.play('slashAnim');
+                    }
                     this.sword.reverse = true;
                 }
                 this.swung = true;
@@ -313,7 +325,6 @@ class Play extends Phaser.Scene {
                 this.ammo--;
                 this.ammoCount.text = this.ammo;
                 this.ammoCountShadow.text = this.ammo;
-                console.log(this.ammo);
             }
 
             // gun focus
@@ -340,6 +351,52 @@ class Play extends Phaser.Scene {
                     this.pingPong = 1;
                 }
             }
+        }
+
+        // power up!
+        if (this.power >= 1) {
+            if (!this.powerMode && Phaser.Input.Keyboard.JustDown(this.powerKey)) {
+                this.powerMode = true;
+                this.powerDecrease = basePowerDecrease;
+                this.gun.setTexture('gunUpgrade');
+                this.sword.anims.play('powerSlashAnim');
+                this.sword.anims.pause();
+            }
+        }
+        if (this.powerMode) {
+            this.power -= this.powerDecrease * delta / 60;
+            if (this.powerDecrease < maxPowerLoss) {
+                this.powerDecrease += powerLoss;
+            } else {
+                this.powerDecrease = maxPowerLoss;
+            }
+
+            if (this.power <= 0) {
+                this.power = 0;
+                this.powerMode = false;
+                this.gun.setTexture('gun');
+                this.sword.anims.play('slashAnim');
+                this.sword.anims.pause();
+            }
+        }
+
+        // ui power
+        this.endCap.height = 190 * this.power;
+        this.endCap.y = 471 - this.endCap.height + 190;
+        var offset = 3 / 190;
+        if (this.power > 1-offset){
+            this.powerProgress.height = 184;
+            this.powerProgress.y = 474;
+        } else if (this.power < offset) {
+            this.powerProgress.height = 0;
+        } else if (offset < this.power && this.power < 1-offset) {
+            this.powerProgress.height = this.endCap.height - 3;
+            this.powerProgress.y = this.endCap.y;
+        } 
+
+        //debug power
+        if (Phaser.Input.Keyboard.JustDown(this.debugPower) && debug) {
+            this.power = 1;
         }
 
         // hitbox
