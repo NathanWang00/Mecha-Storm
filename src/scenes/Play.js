@@ -27,6 +27,7 @@ class Play extends Phaser.Scene {
         this.load.image('health', './assets/Heart.png');
         this.load.image('damage', './assets/Damaged.png');
         this.load.image('powerPanel', './assets/PowerPanel.png');
+        this.load.video('towerLoop', './assets/towerLoop.mp4', 'loadeddata', false, true);
 
 
         //SFX load
@@ -37,6 +38,8 @@ class Play extends Phaser.Scene {
 
     create() {
         this.cameras.main.setBackgroundColor('#FFFFFF');
+        this.towerLoop = this.add.video(180, 0, 'towerLoop').setOrigin(0,0);
+        this.towerLoop.changeSource('towerLoop', true, true);
 
         //Game Audio
         this.swordBeamFire = this.sound.add('swordBeamFire');
@@ -149,6 +152,7 @@ class Play extends Phaser.Scene {
 
 
         // ui backgrounds
+
         this.backgroundPanel1 = this.add.image(90, 360, 'backgroundPanel');
         this.backgroundPanel2 = this.add.image(990, 360, 'backgroundPanel');
         this.healthPanel = this.add.image(90, 63, 'healthPanel');
