@@ -50,6 +50,7 @@ class Play extends Phaser.Scene {
         this.actionable = true;
         this.pingPong = 0; // logic for flickering sprite
         this.player.body.setSize(54, 54, true);
+        this.score = 0;
 
         this.lives = lives;
         this.ammo = baseAmmo;
@@ -154,6 +155,7 @@ class Play extends Phaser.Scene {
         this.swordPanel = this.add.image(90, 185.5, 'swordPanel');
         this.gunPanel = this.add.image(90, 352, 'gunPanel');
         this.powerPanel = this.add.image(90, 566, 'powerPanel');
+        this.scorePanel = this.add.image(990, 63, 'healthPanel');
 
         // health display
 
@@ -213,7 +215,19 @@ class Play extends Phaser.Scene {
 
         this.endCap = this.add.rectangle(82, 658, 16, 4, 0xb686ff).setOrigin(0, 0);
         this.powerProgress = this.add.rectangle(78, 658, 24, 0, 0xb686ff).setOrigin(0, 0);
-        
+
+        // score display
+
+        playConfig.color = '#213136';
+        this.scoreLabel = this.add.text(990 + 2, 40 + 2, "SCORE", playConfig).setOrigin(0.5);
+        playConfig.color = '#89cae0';
+        this.scoreLabelShadow = this.add.text(990, 40, "SCORE", playConfig).setOrigin(0.5);
+
+        playConfig.fontSize = '40px';
+        playConfig.color = '#213136';
+        this.scoreText = this.add.text(990 + 2, 75 + 2, this.score, playConfig).setOrigin(0.5);
+        playConfig.color = '#89cae0';
+        this.scoreTextShadow = this.add.text(990, 75, this.score, playConfig).setOrigin(0.5);
 
         // Collisions
         this.physics.add.collider(this.player, this.rect1);

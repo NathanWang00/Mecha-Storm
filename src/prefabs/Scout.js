@@ -16,6 +16,7 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
         this.angAccel = 0;
         this.power = 0;
         this.bulletDrop = 0;
+        this.pointValue = 50;
     }
 
     spawn(x, y, accel, ang, angAccel, power, bullet) {
@@ -72,5 +73,11 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;
+
+        // update score
+
+        this.scene.score += this.pointValue;
+        this.scene.scoreText.text = this.scene.score;
+        this.scene.scoreTextShadow.text = this.scene.score;
     }
 }
