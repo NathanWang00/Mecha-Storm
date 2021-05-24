@@ -17,6 +17,11 @@ class SwordBeam extends Phaser.Physics.Arcade.Sprite {
         var tempSpeed = swordSpeed;
         this.baseDamage = baseDamage;
 
+        this.piercing = true;
+        this.unpierce = this.scene.time.delayedCall(100, () => {
+            this.piercing = false;
+        }, null, this);
+
         if (this.scene.powerMode) {
             this.baseDamage = pSwordDamage;
             tempSpeed = pSwordSpeed;
@@ -46,19 +51,15 @@ class SwordBeam extends Phaser.Physics.Arcade.Sprite {
     }
 
     hit(obj) {
-        if (this.piercing) {
-            if (!this.hitArray.includes(obj)) {
-                this.hitArray.push(obj)
-                this.lastHit = obj;
+        if (!this.hitArray.includes(obj)) {
+            this.hitArray.push(obj)
+            this.lastHit = obj;
+            if (!this.piercing) {
                 this.damage = this.damage - obj.health;
-                return true;
-            } else {
-                return false;
             }
-        } else {
-            this.body.reset(0, 0);//for debug
-            this.stop();
             return true;
+        } else {
+            return false;
         }
     }
 

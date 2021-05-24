@@ -28,7 +28,7 @@ class Power extends Phaser.Physics.Arcade.Sprite {
 
     hit() {
         this.body.reset(0, 0);//for debug
-        if (this.scene.power < 1 - powerIncrease) {
+        if (this.scene.power < 0.95 - powerIncrease) {
             this.scene.power += powerIncrease;
         } else {
             this.scene.power = 1;

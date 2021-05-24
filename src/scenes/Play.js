@@ -331,6 +331,18 @@ class Play extends Phaser.Scene {
                 this.ammo--;
                 this.ammoCount.text = this.ammo;
                 this.ammoCountShadow.text = this.ammo;
+                if (this.powerMode) {
+                    this.gun.setTexture('gunShotUpgrade');
+                } else {
+                    this.gun.setTexture('gunShot');
+                }
+                this.shot = this.time.delayedCall(100, () => {
+                    if (this.powerMode) {
+                        this.gun.setTexture('gunUpgrade');
+                    } else {
+                        this.gun.setTexture('gun');
+                    }
+                }, null, this);
             }
 
             // gun focus
