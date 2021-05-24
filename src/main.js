@@ -44,6 +44,13 @@ let basePowerDecrease = 0.001;
 let powerLoss = 0.0001;
 let maxPowerLoss = 0.02;
 
+let scoutHealth = 50;
+let scoutSpeed = 200;
+let maxScoutSpeed = 350;
+let bbSpeed = 400;
+let bbMin = 175;
+let bbAccel = -50;
+
 //power upgrades
 let pPlayerSpeed = 650;
 let pSwingSpeed = 275;
@@ -53,9 +60,6 @@ let pTracerSpeed = 3500;
 let pTracerDamage = 700;
 
 let debug = true;
-
-let scoutHealth = 50;
-let basicBulletSpeed = 250;
 
 /* 
 

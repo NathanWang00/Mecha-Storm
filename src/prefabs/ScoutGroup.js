@@ -13,12 +13,12 @@ class ScoutGroup extends Phaser.Physics.Arcade.Group
         })
     }
 
-    spawn(x, y, scene, speed) {
+    spawn(x, y, scene, speed, accel, ang, angAccel, power, bullet) {
         this.runChildUpdate = true;
         var scout = this.getFirstDead(false);
         if (scout) {
             scene.enableBullet(scout, speed);
-            scout.spawn(x, y);
+            scout.spawn(x, y, accel, ang, angAccel, power, bullet);
         }
     }
 }

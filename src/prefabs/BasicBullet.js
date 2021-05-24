@@ -5,6 +5,7 @@ class BasicBullet extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
 
         this.stop();
+        this.accel = 0;
     }
 
     shoot(x, y, angle) {
@@ -15,6 +16,13 @@ class BasicBullet extends Phaser.Physics.Arcade.Sprite {
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
+        if (this.bullet.enable) {
+            if (this.bullet.speed + bbAccel * delta / 60 > bbMin) {
+                this.bullet.setSpeed(this.bullet.speed + bbAccel * delta / 60);
+            } else if (bbAccel < 0) {
+                this.bullet.setSpeed(bbMin);
+            }
+        }
         if (this.y < -this.height || this.y > this.height + game.config.height) {
             this.stop();
         }

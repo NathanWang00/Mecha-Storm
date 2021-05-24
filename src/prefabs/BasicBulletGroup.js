@@ -23,7 +23,9 @@ class BasicBulletGroup extends Phaser.Physics.Arcade.Group
                 //bullet.setSize(50, 50, true);
                 bullet.body.setCircle(10, bullet.height/2 -10, bullet.width/2 - 10);
                 //tracer.setOffset(tracer, 0);
-                scene.enableBullet(bullet, basicBulletSpeed);
+                scene.enableBullet(bullet, bbSpeed);
+            } else {
+                bullet.bullet.setSpeed(bbSpeed);
             }
             
         }

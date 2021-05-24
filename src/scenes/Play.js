@@ -253,7 +253,6 @@ class Play extends Phaser.Scene {
         let vert = 0;
         let tempSpeed = this.playerSpeed;
 
-
         if (this.actionable) {
             // player movement
             if (this.cursors.up.isDown) {
@@ -456,28 +455,47 @@ class Play extends Phaser.Scene {
         obj.moveTo.moveTo(xPos, yPos);
     }
 
-    spawnWave() {
-        switch(this.spawnTrack) {
+    spawnWave(wave) {
+        var delay = 2000;
+        var tempTrack = this.spawnTrack;
+        if (wave != null) {
+            tempTrack = wave;
+        }
+        switch(tempTrack) {
             case 1 : 
-                this.scoutGroup.spawn(520, -50, this, 50);
-                this.scoutGroup.spawn(320, -50, this, 50);
-                this.scoutGroup.spawn(720, -50, this, 50);
-                this.spawnTrack++;
-                break;
+                //x, y, scene, speed, accel, ang, angAccel, power(#), ammo(%), bulletOption(0-2)
+                //520 = half
+                this.scoutGroup.spawn(320, -50, this, scoutSpeed, 20, 0, -2, 1, 0.5);
+                if (wave == null) {
+                    this.spawn = this.time.delayedCall(300, this.spawnWave, [1], this);
+                    this.spawn = this.time.delayedCall(600, this.spawnWave, [1], this);
+                }
+            break;
 
             case 2 :
-                this.scoutGroup.spawn(370, -50, this, 50);
-                this.scoutGroup.spawn(670, -50, this, 50);
-                this.spawnTrack--;
-                break;
+                //x, y, scene, speed, accel, ang, angAccel, power(#), ammo(%), bulletOption(0-2)
+                this.scoutGroup.spawn(720, -50, this, scoutSpeed, 20, 0, 2, 1, 0.5);
+                if (wave == null) {
+                    this.spawn = this.time.delayedCall(300, this.spawnWave, [2], this);
+                    this.spawn = this.time.delayedCall(600, this.spawnWave, [2], this);
+                }
+            break;
+
+            case 3 :
+                //this.scoutGroup.spawn(320, -50, this, scoutSpeed, 10, 0, -1, 1, 0.5);
+                delay = 1000;
+                this.spawnTrack = 0;
+            break;
 
             default :
                 console.log("spawn error");
         }
+        if (wave == null) {
+            this.spawnTrack++;
 
-        // repeat the wave for testing
-        this.spawn = this.time.delayedCall(2000, this.spawnWave, null, this);
-        
+            // repeat the wave for testing
+            this.spawn = this.time.delayedCall(delay, this.spawnWave, null, this);
+        }
     }
 
     angToPlayer(x, y) {
