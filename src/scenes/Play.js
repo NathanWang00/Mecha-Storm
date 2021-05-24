@@ -512,6 +512,18 @@ class Play extends Phaser.Scene {
         }
     }
 
+    spawnCircle(x, y, scene, number, angle) {
+        if (angle == null) {
+            for (let index = 0; index < number; index++) {
+                this.basicBulletGroup.shootBullet(x, y, scene, this.angToPlayer(x, y) + index * 360 / number);
+            }
+        } else {
+            for (let index = 0; index < number; index++) {
+                this.basicBulletGroup.shootBullet(x, y, scene, angle + index * 360 / number);
+            }
+        }
+    }
+
     spawnPickup(x, y, power, ammo) {
         var spawnCode = this.spawnAmmo(x, y, ammo);
         if (spawnCode == -1){
