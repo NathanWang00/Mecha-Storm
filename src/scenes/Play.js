@@ -199,9 +199,9 @@ class Play extends Phaser.Scene {
         playConfig.fontSize = '40px';
         playConfig.strokeThickness = 4;
         playConfig.color = '#213136';
-        this.ammoCount = this.add.text(101 + 2, 409 + 2, baseAmmo, playConfig).setOrigin(0.5);
+        this.ammoCount = this.add.text(107 + 2, 409 + 2, baseAmmo + "/" + baseAmmo, playConfig).setOrigin(0.5);
         playConfig.color = '#e8b046';
-        this.ammoCountShadow = this.add.text(101, 409, baseAmmo, playConfig).setOrigin(0.5);
+        this.ammoCountShadow = this.add.text(107, 409, baseAmmo + "/" + baseAmmo, playConfig).setOrigin(0.5);
 
         // power display
 
@@ -342,8 +342,8 @@ class Play extends Phaser.Scene {
                 var gunOffset = 70;
                 this.tracerGroup.shootTracer(this.gun.x + gunOffset * Math.cos(convertedAngle), this.gun.y + gunOffset * Math.sin(convertedAngle), this, this.gun.angle-90);
                 this.ammo--;
-                this.ammoCount.text = this.ammo;
-                this.ammoCountShadow.text = this.ammo;
+                this.ammoCount.text = this.ammo + "/" + baseAmmo;;
+                this.ammoCountShadow.text = this.ammo + "/" + baseAmmo;;
                 if (this.powerMode) {
                     this.gun.setTexture('gunShotUpgrade');
                 } else {
