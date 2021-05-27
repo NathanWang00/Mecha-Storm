@@ -13,11 +13,11 @@ class SwordGroup extends Phaser.Physics.Arcade.Group
         })
     }
 
-    shootBeam(x, y, swung) {
+    shootBeam(x, y, swung, upgrade) {
         this.runChildUpdate = true;
         const sword = this.getFirstDead(false);
         if (sword) {
-            sword.shoot(x, y, swung);
+            sword.shoot(x, y, swung, upgrade);
         }
     }
 }

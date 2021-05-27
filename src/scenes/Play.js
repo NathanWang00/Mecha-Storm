@@ -16,7 +16,7 @@ class Play extends Phaser.Scene {
         this.load.image('swordBeam', './assets/TempSwordBeam.png');
         this.load.image('swordSlashLeft', './assets/SwordSlashLeft.png');
         this.load.image('swordSlashRight', './assets/SwordSlashRight.png');
-        this.load.image('swordSlashLeftUpgraded', './assets/SwordSlashLeft.png');
+        this.load.image('swordSlashLeftUpgraded', './assets/SwordSlashLeftUpgraded.png');
         this.load.image('swordSlashRightUpgraded', './assets/SwordSlashRightUpgraded.png');
         this.load.image('tracer', './assets/Tracer.png');
         this.load.image('basicBullet', './assets/EnemyBullet.png');
@@ -349,7 +349,7 @@ class Play extends Phaser.Scene {
                     this.swung = false;
                 }, null, this);
                 this.swordBeamFire.play();//Fire sfx
-                this.swordGroup.shootBeam(this.player.x, this.player.y - 60, this.sword.reverse);
+                this.swordGroup.shootBeam(this.player.x, this.player.y - 60, this.sword.reverse, this.powerMode);
             }
 
             // awful naming conventions...

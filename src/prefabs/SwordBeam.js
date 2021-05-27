@@ -13,14 +13,22 @@ class SwordBeam extends Phaser.Physics.Arcade.Sprite {
         this.stop();
     }
 
-    shoot(x, y, swung) {
+    shoot(x, y, swung, upgrade) {
         var tempSpeed = swordSpeed;
         this.baseDamage = baseDamage;
 
         if (swung) {
-            this.setTexture('swordSlashLeft');
+            if (upgrade) {
+                this.setTexture('swordSlashLeftUpgraded');
+            } else {
+                this.setTexture('swordSlashLeft');
+            }
         } else {
-            this.setTexture('swordSlashRight');
+            if (upgrade) {
+                this.setTexture('swordSlashRightUpgraded');
+            } else {
+                this.setTexture('swordSlashRight');
+            }
         }
 
         this.piercing = true;
