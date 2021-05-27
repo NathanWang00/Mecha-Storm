@@ -23,12 +23,12 @@ class Play extends Phaser.Scene {
         this.load.image('healthPanel', './assets/HealthPanel.png');
         this.load.image('swordPanel', './assets/SwordPanel.png');
         this.load.image('gunPanel', './assets/GunPanel.png');
-        this.load.image('backgroundPanel', './assets/BackgroundPanel.png');
+        this.load.image('backgroundPanel', './assets/BackgroundPanel.png');//UI panel
         this.load.image('health', './assets/Heart.png');
         this.load.image('damage', './assets/Damaged.png');
         this.load.image('powerPanel', './assets/PowerPanel.png');
-        this.load.video('towerLoop', './assets/towerLoop.mp4', 'loadeddata', false, true);
-
+        this.load.image('sceneBackground', './assets/sceneBackground.png');//Scenery
+        this.load.image('towerScroll', './assets/TowerScroll.png');
 
         //SFX load
         this.load.audio('swordBeamFire', ['assets/placeholderSwordShot.wav']);
@@ -37,9 +37,10 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+        //Background Scenery
         this.cameras.main.setBackgroundColor('#FFFFFF');
-        this.towerLoop = this.add.video(180, 0, 'towerLoop').setOrigin(0,0);
-        this.towerLoop.changeSource('towerLoop', true, true);
+        this.sceneBackground = this.add.image(540, 360, 'sceneBackground');
+        this.towerScroll = this.add.tileSprite(180, 0, 0, 0, 'towerScroll').setOrigin(0,0);
 
         //Game Audio
         this.swordBeamFire = this.sound.add('swordBeamFire');
@@ -270,6 +271,9 @@ class Play extends Phaser.Scene {
         let horz = 0;
         let vert = 0;
         let tempSpeed = this.playerSpeed;
+
+        //background scroll update
+        this.towerScroll.tilePositionY -= 3;
 
         if (this.actionable) {
             // player movement
