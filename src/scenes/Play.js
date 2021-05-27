@@ -349,7 +349,7 @@ class Play extends Phaser.Scene {
                     this.swung = false;
                 }, null, this);
                 this.swordBeamFire.play();//Fire sfx
-                this.swordGroup.shootBeam(this.player.x, this.player.y - 60);
+                this.swordGroup.shootBeam(this.player.x, this.player.y - 60, this.sword.reverse);
             }
 
             // awful naming conventions...
