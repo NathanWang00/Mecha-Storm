@@ -14,6 +14,10 @@ class Play extends Phaser.Scene {
         this.load.image('gunShot', './assets/GunShot.png');
         this.load.image('gunShotUpgrade', './assets/GunShotUpgraded.png')
         this.load.image('swordBeam', './assets/TempSwordBeam.png');
+        this.load.image('swordSlashLeft', './assets/SwordSlashLeft.png');
+        this.load.image('swordSlashRight', './assets/SwordSlashRight.png');
+        this.load.image('swordSlashLeftUpgraded', './assets/SwordSlashLeft.png');
+        this.load.image('swordSlashRightUpgraded', './assets/SwordSlashRightUpgraded.png');
         this.load.image('tracer', './assets/Tracer.png');
         this.load.image('basicBullet', './assets/EnemyBullet.png');
         this.load.plugin('rexbulletplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexbulletplugin.min.js', true);
