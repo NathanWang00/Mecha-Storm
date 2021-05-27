@@ -29,6 +29,10 @@ class Play extends Phaser.Scene {
         this.load.image('powerPanel', './assets/PowerPanel.png');
         this.load.image('sceneBackground', './assets/sceneBackground.png');//Scenery
         this.load.image('towerScroll', './assets/TowerScroll.png');
+        this.load.image('gunIconRegular', './assets/GunIcon.png');
+        this.load.image('gunIconUpgraded', './assets/GunIconUpgraded.png');
+        this.load.image('swordIconRegular', './assets/SwordIcon.png');
+        this.load.image('swordIconUpgraded', './assets/SwordIconUpgraded.png');
 
         //SFX load
         this.load.audio('swordBeamFire', ['assets/placeholderSwordShot.wav']);
@@ -234,6 +238,24 @@ class Play extends Phaser.Scene {
         playConfig.color = '#89cae0';
         this.scoreTextShadow = this.add.text(990, 75, this.score, playConfig).setOrigin(0.5);
 
+        // weapon display
+
+        this.swordIcon = this.add.sprite(57, 140, 'swordIconRegular').setOrigin(0);
+
+        playConfig.fontSize = '20px';
+        playConfig.color = '#213136';
+        this.swordLabel = this.add.text(90 + 2, 220 + 2, "STANDARD", playConfig).setOrigin(0.5);
+        playConfig.color = '#89cae0';
+        this.swordLabelShadow = this.add.text(90, 220, "STANDARD", playConfig).setOrigin(0.5);
+
+        this.gunIcon = this.add.sprite(58, 276, 'gunIconRegular').setOrigin(0);
+
+        playConfig.fontSize = '20px';
+        playConfig.color = '#213136';
+        this.gunLabel = this.add.text(90 + 2, 364 + 2, "STANDARD", playConfig).setOrigin(0.5);
+        playConfig.color = '#89cae0';
+        this.gunLabelShadow = this.add.text(90, 364, "STANDARD", playConfig).setOrigin(0.5);
+
         // Collisions
         this.physics.add.collider(this.player, this.rect1);
         this.physics.add.collider(this.player, this.rect2);
@@ -398,6 +420,20 @@ class Play extends Phaser.Scene {
                 this.powerMode = true;
                 this.powerDecrease = basePowerDecrease;
                 this.gun.setTexture('gunUpgrade');
+
+                // ui update
+
+                this.swordIcon.setTexture('swordIconUpgraded');
+                this.gunIcon.setTexture('gunIconUpgraded');
+
+                this.swordLabel.text = "UPGRADED";
+                this.swordLabelShadow.style.color = '#ff8797';
+                this.swordLabelShadow.text = "UPGRADED";
+
+                this.gunLabel.text = "UPGRADED";
+                this.gunLabelShadow.style.color = '#ff8797';
+                this.gunLabelShadow.text = "UPGRADED";
+
                 if (this.sword.reverse) {
                     this.sword.anims.playReverse('powerSlashAnim');
                 } else {
@@ -420,6 +456,20 @@ class Play extends Phaser.Scene {
                 this.power = 0;
                 this.powerMode = false;
                 this.gun.setTexture('gun');
+
+                //ui update
+
+                this.swordIcon.setTexture('swordIconRegular');
+                this.gunIcon.setTexture('gunIconRegular');
+
+                this.swordLabel.text = "STANDARD";
+                this.swordLabelShadow.style.color = '#89cae0';
+                this.swordLabelShadow.text = "STANDARD";
+
+                this.gunLabel.text = "STANDARD";
+                this.gunLabelShadow.style.color = '#89cae0';
+                this.gunLabelShadow.text = "STANDARD";
+
                 if (this.sword.reverse) {
                     this.sword.anims.playReverse('slashAnim');
                 } else {
