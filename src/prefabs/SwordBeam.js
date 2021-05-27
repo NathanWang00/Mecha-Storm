@@ -1,6 +1,6 @@
 class SwordBeam extends Phaser.Physics.Arcade.Sprite {
     constructor (scene) {
-        super(scene, 0, 0, 'swordBeam');
+        super(scene, 0, 0, 'swordSlashLeft');
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.damage = baseDamage;

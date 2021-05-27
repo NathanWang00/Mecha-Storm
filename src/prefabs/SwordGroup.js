@@ -9,7 +9,7 @@ class SwordGroup extends Phaser.Physics.Arcade.Group
             active: false,
             visible: false,
             runChildUpdate: true,
-            key: 'swordBeam'
+            key: 'swordSlashLeft'
         })
     }
 
