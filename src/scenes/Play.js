@@ -37,6 +37,7 @@ class Play extends Phaser.Scene {
         this.load.image('gunIconUpgraded', './assets/GunIconUpgraded.png');
         this.load.image('swordIconRegular', './assets/SwordIcon.png');
         this.load.image('swordIconUpgraded', './assets/SwordIconUpgraded.png');
+        this.load.image('cloudScroll', './assets/CloudScroll.png');
 
         //SFX load
         this.load.audio('swordBeamFire', ['assets/placeholderSwordShot.wav']);
@@ -48,6 +49,7 @@ class Play extends Phaser.Scene {
         //Background Scenery
         this.cameras.main.setBackgroundColor('#FFFFFF');
         this.sceneBackground = this.add.image(540, 360, 'sceneBackground');
+        this.cloudScroll = this.add.tileSprite(180, 0, 0, 0, 'cloudScroll').setOrigin(0,0);
         this.towerScroll = this.add.tileSprite(180, 0, 0, 0, 'towerScroll').setOrigin(0,0);
 
         //Game Audio
@@ -299,6 +301,7 @@ class Play extends Phaser.Scene {
         let tempSpeed = this.playerSpeed;
 
         //background scroll update
+        this.cloudScroll.tilePositionY -= 2;
         this.towerScroll.tilePositionY -= 3;
 
         if (this.actionable) {
