@@ -43,6 +43,11 @@ class Play extends Phaser.Scene {
         this.load.audio('swordBeamFire', ['assets/placeholderSwordShot.wav']);
         this.load.audio('gunShot', ['assets/placeholderGunShot.wav']);
         this.load.audio('explosionSfx', ['assets/placeholderExplosion.wav']);
+        this.load.audio('botHurtSfx', ['assets/botHurt01.wav']);
+        this.load.audio('ammoSfx', ['assets/ammoPickup.wav']);
+        this.load.audio('upgradeSfx', ['assets/upgrade01.wav']);
+        this.load.audio('playerHitSfx', ['assets/playerHit.wav']);
+        this.load.audio('noAmmoSfx', ['assets/noAmmo.wav']);
     }
 
     create() {
@@ -56,6 +61,11 @@ class Play extends Phaser.Scene {
         this.swordBeamFire = this.sound.add('swordBeamFire');
         this.gunShot = this.sound.add('gunShot');
         this.explosionSfx = this.sound.add('explosionSfx');
+        this.botHurtSfx = this.sound.add('botHurtSfx');
+        this.ammoSfx = this.sound.add('ammoSfx');
+        this.upgradeSfx = this.sound.add('upgradeSfx');
+        this.playerHitSfx = this.sound.add('playerHitSfx');
+        this.noAmmoSfx = this.sound.add('noAmmoSfx');
 
         // player 
         this.player = this.physics.add.sprite(520, 650, 'player');
@@ -667,6 +677,8 @@ class Play extends Phaser.Scene {
                     this.pingPong = 0;
                 }, null, this);
             }
+            this.playerHitSfx.play();
+            this.noAmmoSfx.play();
             this.livesArray[this.lives].destroy();
             this.damagedArray[this.lives].alpha = 1;
             this.lives--;

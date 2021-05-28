@@ -25,6 +25,7 @@ class Ammo extends Phaser.Physics.Arcade.Sprite {
     hit() {
         this.body.reset(0, 0);//for debug
         if (this.scene.ammo < this.scene.maxAmmo) {
+            this.scene.ammoSfx.play();
             this.scene.ammo++;
             this.scene.ammoCount.text = this.scene.ammo + "/" + baseAmmo;
             this.scene.ammoCountShadow.text = this.scene.ammo + "/" + baseAmmo;
