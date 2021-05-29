@@ -13,7 +13,7 @@ let config = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: false,
+            debug: true,
             gravity: {
                 y: 0
             }
@@ -47,9 +47,14 @@ let maxPowerLoss = 0.02;
 let scoutHealth = 50;
 let scoutSpeed = 200;
 let maxScoutSpeed = 350;
+
 let bbSpeed = 400;
 let bbMin = 175;
 let bbAccel = -50;
+
+let fbSpeed = 700;
+let fbMin = 200;
+let fbAccel = 100;
 
 //power upgrades
 let pPlayerSpeed = 650;

@@ -24,7 +24,7 @@ class TracerGroup extends Phaser.Physics.Arcade.Group
                 }
             if (tracer.bullet == null) {
                 tracer.setOrigin(0.5, 0.5);
-                tracer.setSize(50, 50);
+                tracer.setSize(40, 40);
                 //tracer.setOffset(tracer, 0);
                 scene.enableBullet(tracer, tempSpeed);
             }

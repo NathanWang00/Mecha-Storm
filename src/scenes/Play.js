@@ -10,6 +10,7 @@ class Play extends Phaser.Scene {
         this.load.image('hitbox', './assets/PlayerHitbox.png');
         this.load.image('scout', './assets/Scout.png');
         this.load.image('gun', './assets/GunIdle.png');
+
         this.load.image('gunUpgrade', './assets/GunIdleUpgraded.png');
         this.load.image('gunShot', './assets/GunShot.png');
         this.load.image('gunShotUpgrade', './assets/GunShotUpgraded.png')
@@ -18,16 +19,21 @@ class Play extends Phaser.Scene {
         this.load.image('swordSlashRight', './assets/SwordSlashRight.png');
         this.load.image('swordSlashLeftUpgraded', './assets/SwordSlashLeftUpgraded.png');
         this.load.image('swordSlashRightUpgraded', './assets/SwordSlashRightUpgraded.png');
+
         this.load.image('tracer', './assets/Tracer.png');
-        this.load.image('basicBullet', './assets/EnemyBullet.png');
+        this.load.image('basicBullet', './assets/EnemyProjectile1.png');
+        this.load.image('fastBullet', './assets/EnemyProjectile2.png')
+
         this.load.plugin('rexbulletplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexbulletplugin.min.js', true);
         this.load.plugin('rexmovetoplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexmovetoplugin.min.js', true);//for move to
+
         this.load.atlas('swordTexture', './assets/swordTexture.png', './assets/swordTexture.json');
         this.load.image('crosshair', './assets/Crosshair.png');
         this.load.image('healthPanel', './assets/HealthPanel.png');
         this.load.image('swordPanel', './assets/SwordPanel.png');
         this.load.image('gunPanel', './assets/GunPanel.png');
         this.load.image('backgroundPanel', './assets/BackgroundPanel.png');//UI panel
+
         this.load.image('health', './assets/Heart.png');
         this.load.image('damage', './assets/Damaged.png');
         this.load.image('powerPanel', './assets/PowerPanel.png');
@@ -73,7 +79,7 @@ class Play extends Phaser.Scene {
         this.damageable = true;
         this.actionable = true;
         this.pingPong = 0; // logic for flickering sprite
-        this.player.body.setSize(54, 54, true);
+        this.player.body.setSize(20, 54, true);
         this.score = 0;
 
         this.lives = lives;
@@ -107,6 +113,7 @@ class Play extends Phaser.Scene {
         // Enemy groups
         this.scoutGroup = new ScoutGroup(this);
         this.basicBulletGroup = new BasicBulletGroup(this);
+        this.fastBulletGroup = new FastBulletGroup(this);
 
         // Pickups
         this.ammoGroup = new AmmoGroup(this);
@@ -291,6 +298,7 @@ class Play extends Phaser.Scene {
         });
         this.physics.add.overlap(this.scoutGroup, this.hitbox, this.playerHurt, null, this);
         this.physics.add.overlap(this.hitbox, this.basicBulletGroup, this.playerHurt, null, this);
+        this.physics.add.overlap(this.hitbox, this.fastBulletGroup, this.playerHurt, null, this);
 
         this.physics.add.overlap(this.player, this.ammoGroup, function (player, ammoGroup)
         {
@@ -603,6 +611,14 @@ class Play extends Phaser.Scene {
         }
     }
 
+    spawnFast(x, y, scene, angle) {
+        if (angle == null) {
+            this.fastBulletGroup.shootBullet(x, y, scene, this.angToPlayer(x, y));
+        } else {
+            this.fastBulletGroup.shootBullet(x, y, scene, angle);
+        }
+    }
+
     spawnCircle(x, y, scene, number, angle) {
         if (angle == null) {
             for (let index = 0; index < number; index++) {
@@ -691,7 +707,9 @@ class Play extends Phaser.Scene {
     closestGroup(group) {
         var active = group.getMatching('active', true)
         for (var i = 0; i < active.length; ++i) {
-            this.closestChild(active[i]);
+            if (active[i].x + active[i].width/2 > 180 && active[i].x - active[i].width/2 < game.config.width - 360) {
+                this.closestChild(active[i]);
+            }
         }
     }
 
@@ -699,11 +717,9 @@ class Play extends Phaser.Scene {
         if (this.closestEnemy == null) {
             this.closestEnemy = obj;
         } else {
-            if (obj.x > 180 && obj.x < game.config.width - 360) {
-                if (Phaser.Math.Distance.Between(this.player.x, this.player.y, obj.x, obj.y) <
-                Phaser.Math.Distance.Between(this.player.x, this.player.y, this.closestEnemy.x, this.closestEnemy.y)) {
-                    this.closestEnemy = obj;    
-                }
+            if (Phaser.Math.Distance.Between(this.player.x, this.player.y, obj.x, obj.y) <
+            Phaser.Math.Distance.Between(this.player.x, this.player.y, this.closestEnemy.x, this.closestEnemy.y)) {
+                this.closestEnemy = obj;    
             }
         }
     }
