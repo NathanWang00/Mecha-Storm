@@ -1,13 +1,13 @@
-class Scout extends Phaser.Physics.Arcade.Sprite {
+class Regular extends Phaser.Physics.Arcade.Sprite {
     constructor (scene) {
-        super(scene, 0, 0, 'scout');
+        super(scene, 0, 0, 'regular');
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
         //initial variables
-        this.health = scoutHealth;
+        this.health = regularHealth;
 
-        this.setSize(50, 50);
+        //this.setSize(50, 50);
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;
@@ -30,28 +30,27 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
         this.power = power;
         this.bulletDrop = bullet;
 
-        this.shoot = this.scene.time.delayedCall(1000, () => {
+        /*this.shoot = this.scene.time.delayedCall(1000, () => {
             this.scene.spawnFast(this.x, this.y, this.scene);
             //this.scene.spawnFast(this.x, this.y, this.scene, this.scene.angToPlayer(this.x, this.y) + 30);
             //this.scene.spawnFast(this.x, this.y, this.scene, this.scene.angToPlayer(this.x, this.y) - 30);
-        }, null, this.scene);
+        }, null, this.scene);*/
     }
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
         if (this.bullet.enable) {
             this.setAngle(this.angle + this.angAccel * delta / 60);
-            if (this.bullet.speed < maxScoutSpeed - this.accel * delta / 60) {
+            /*if (this.bullet.speed < maxScoutSpeed - this.accel * delta / 60) {
                 this.bullet.setSpeed(this.bullet.speed + this.accel * delta / 60);
             } else {
                 this.bullet.setSpeed(maxScoutSpeed);
-            }
+            }*/
             
             if (this.y > this.height + game.config.height || this.y < -400 || this.x > game.config.width + 400 || this.x < -400) {
                 this.death();
             }
         }
-        //this.bullet.speed += 100 * delta / 60;
     }
 
     hit(damage) {
@@ -59,11 +58,11 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
             this.health -= damage;
             if (this.health <= 0) {
                 // update score
-                this.scene.score += scoutPoints;
+                this.scene.score += regularPoints;
                 this.scene.scoreText.text = this.scene.score;
                 this.scene.scoreTextShadow.text = this.scene.score;
 
-                this.scene.spawnCircle(this.x, this.y, this.scene, 8, null);
+                //this.scene.spawnCircle(this.x, this.y, this.scene, 8, null);
                 this.scene.spawnPickup(this.x, this.y, this.power, this.bulletDrop);
                 this.death();
                 this.scene.botHurtSfx.play();
@@ -73,7 +72,7 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
 
     death() {
         this.body.reset(0, 0);
-        this.scene.time.removeEvent(this.shoot);
+        //this.scene.time.removeEvent(this.shoot);
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;

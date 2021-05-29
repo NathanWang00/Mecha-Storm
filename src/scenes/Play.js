@@ -8,9 +8,12 @@ class Play extends Phaser.Scene {
         this.load.image('power', './assets/Power.png')
         this.load.image('player', './assets/Player.png');
         this.load.image('hitbox', './assets/PlayerHitbox.png');
-        this.load.image('scout', './assets/Scout.png');
-        this.load.image('gun', './assets/GunIdle.png');
 
+        this.load.image('scout', './assets/Scout.png');
+        this.load.image('regular', './assets/Regular.png');
+        this.load.image('heavy', './assets/Heavy.png');
+
+        this.load.image('gun', './assets/GunIdle.png');
         this.load.image('gunUpgrade', './assets/GunIdleUpgraded.png');
         this.load.image('gunShot', './assets/GunShot.png');
         this.load.image('gunShotUpgrade', './assets/GunShotUpgraded.png')
@@ -112,6 +115,8 @@ class Play extends Phaser.Scene {
 
         // Enemy groups
         this.scoutGroup = new ScoutGroup(this);
+        this.regularGroup = new RegularGroup(this);
+        this.heavyGroup = new HeavyGroup(this);
         this.basicBulletGroup = new BasicBulletGroup(this);
         this.fastBulletGroup = new FastBulletGroup(this);
 
@@ -282,6 +287,7 @@ class Play extends Phaser.Scene {
         // Collisions
         this.physics.add.collider(this.player, this.rect1);
         this.physics.add.collider(this.player, this.rect2);
+        //in hindsight, these should have all been under 1 group, oh well
         this.physics.add.overlap(this.scoutGroup, this.swordGroup, function (scout, swordBeam)
         {
             var tempDamage = swordBeam.getDamage();
@@ -294,6 +300,36 @@ class Play extends Phaser.Scene {
             var tempDamage = tracer.getDamage();
             if(tracer.active && tracer.hit(scout)) {
                 scout.hit(tempDamage);
+            }
+        });
+
+        this.physics.add.overlap(this.regularGroup, this.swordGroup, function (regular, swordBeam)
+        {
+            var tempDamage = swordBeam.getDamage();
+            if(swordBeam.active && swordBeam.hit(regular)) {
+                regular.hit(tempDamage);
+            }
+        });
+        this.physics.add.overlap(this.regularGroup, this.tracerGroup, function (regular, tracer)
+        {
+            var tempDamage = tracer.getDamage();
+            if(tracer.active && tracer.hit(regular)) {
+                regular.hit(tempDamage);
+            }
+        });
+
+        this.physics.add.overlap(this.heavyGroup, this.swordGroup, function (heavy, swordBeam)
+        {
+            var tempDamage = swordBeam.getDamage();
+            if(swordBeam.active && swordBeam.hit(heavy)) {
+                heavy.hit(tempDamage);
+            }
+        });
+        this.physics.add.overlap(this.heavyGroup, this.tracerGroup, function (heavy, tracer)
+        {
+            var tempDamage = tracer.getDamage();
+            if(tracer.active && tracer.hit(heavy)) {
+                heavy.hit(tempDamage);
             }
         });
         this.physics.add.overlap(this.scoutGroup, this.hitbox, this.playerHurt, null, this);
@@ -311,7 +347,7 @@ class Play extends Phaser.Scene {
         })
 
         // Spawning
-        this.spawnTrack = 1;
+        this.spawnTrack = startTrack;
         this.spawnWave();
     }
 
@@ -380,6 +416,8 @@ class Play extends Phaser.Scene {
             if (this.focusKey.isDown) {
                 this.closestEnemy = null;
                 this.closestGroup(this.scoutGroup); //updates closestEnemy to the closest active enemy in the group
+                this.closestGroup(this.regularGroup);
+                this.closestGroup(this.heavyGroup);
                 if (this.closestEnemy != null) {
                     var closeAngle = Phaser.Math.Angle.BetweenPoints({x: this.gun.x, y: this.gun.y}, {x: this.closestEnemy.x, y: this.closestEnemy.y});
                     closeAngle = Phaser.Math.RadToDeg(closeAngle);
@@ -581,9 +619,17 @@ class Play extends Phaser.Scene {
             break;
 
             case 3 :
+                this.regularGroup.spawn(520, -75, this, regularSpeed, 20, 0, 0, 3, 1);
+            break;
+
+            case 4 :
+                this.heavyGroup.spawn(520, -75, this, heavySpeed, 0, 0, 0, 5, 1);    
+            break;
+
+            case 5 :
                 //this.scoutGroup.spawn(320, -50, this, scoutSpeed, 10, 0, -1, 1, 0.5);
                 delay = 1000;
-                this.spawnTrack = 0;
+                this.spawnTrack = 1;
             break;
 
             default :
