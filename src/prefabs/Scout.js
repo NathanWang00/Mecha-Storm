@@ -59,6 +59,11 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
         if (this.active) {
             this.health -= damage;
             if (this.health <= 0) {
+                // update score
+                this.scene.score += this.pointValue;
+                this.scene.scoreText.text = this.scene.score;
+                this.scene.scoreTextShadow.text = this.scene.score;
+
                 this.scene.spawnCircle(this.x, this.y, this.scene, 8, null);
                 this.scene.spawnPickup(this.x, this.y, this.power, this.bulletDrop);
                 this.death();
@@ -73,11 +78,5 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;
-        
-        // update score
-
-        this.scene.score += this.pointValue;
-        this.scene.scoreText.text = this.scene.score;
-        this.scene.scoreTextShadow.text = this.scene.score;
     }
 }

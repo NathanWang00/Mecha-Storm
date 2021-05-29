@@ -6,7 +6,6 @@ class SwordBeam extends Phaser.Physics.Arcade.Sprite {
         this.damage = baseDamage;
         this.baseDamage = this.baseDamage;
         this.piercing = true;
-        this.lastHit = null; //for piercing
         this.hitArray = [];
         this.scene = scene;
 
@@ -67,7 +66,6 @@ class SwordBeam extends Phaser.Physics.Arcade.Sprite {
     hit(obj) {
         if (!this.hitArray.includes(obj)) {
             this.hitArray.push(obj)
-            this.lastHit = obj;
             if (!this.piercing) {
                 this.damage = this.damage - obj.health;
             }

@@ -58,12 +58,12 @@ class Play extends Phaser.Scene {
         this.towerScroll = this.add.tileSprite(180, 0, 0, 0, 'towerScroll').setOrigin(0,0);
 
         //Game Audio
-        this.swordBeamFire = this.sound.add('swordBeamFire');
-        this.gunShot = this.sound.add('gunShot');
+        this.swordBeamFire = this.sound.add('swordBeamFire', {volume: 0.8});
+        this.gunShot = this.sound.add('gunShot', {volume: 0.7});
         this.explosionSfx = this.sound.add('explosionSfx');
-        this.botHurtSfx = this.sound.add('botHurtSfx');
+        this.botHurtSfx = this.sound.add('botHurtSfx', {volume: 0.7});
         this.ammoSfx = this.sound.add('ammoSfx');
-        this.upgradeSfx = this.sound.add('upgradeSfx');
+        this.upgradeSfx = this.sound.add('upgradeSfx', {volume: 0.5});
         this.playerHitSfx = this.sound.add('playerHitSfx');
         this.noAmmoSfx = this.sound.add('noAmmoSfx');
 
@@ -284,8 +284,10 @@ class Play extends Phaser.Scene {
         });
         this.physics.add.overlap(this.scoutGroup, this.tracerGroup, function (scout, tracer)
         {
-            tracer.hit();
-            scout.hit(tracer.getDamage());
+            var tempDamage = tracer.getDamage();
+            if(tracer.active && tracer.hit(scout)) {
+                scout.hit(tempDamage);
+            }
         });
         this.physics.add.overlap(this.scoutGroup, this.hitbox, this.playerHurt, null, this);
         this.physics.add.overlap(this.hitbox, this.basicBulletGroup, this.playerHurt, null, this);
@@ -366,7 +368,7 @@ class Play extends Phaser.Scene {
             }
 
             // awful naming conventions...
-            // shoot
+            // shoot and tracking
             if (this.focusKey.isDown) {
                 this.closestEnemy = null;
                 this.closestGroup(this.scoutGroup); //updates closestEnemy to the closest active enemy in the group
@@ -697,9 +699,11 @@ class Play extends Phaser.Scene {
         if (this.closestEnemy == null) {
             this.closestEnemy = obj;
         } else {
-            if (Phaser.Math.Distance.Between(this.player.x, this.player.y, obj.x, obj.y) <
-            Phaser.Math.Distance.Between(this.player.x, this.player.y, this.closestEnemy.x, this.closestEnemy.y)) {
-                this.closestEnemy = obj;    
+            if (obj.x > 180 && obj.x < game.config.width - 360) {
+                if (Phaser.Math.Distance.Between(this.player.x, this.player.y, obj.x, obj.y) <
+                Phaser.Math.Distance.Between(this.player.x, this.player.y, this.closestEnemy.x, this.closestEnemy.y)) {
+                    this.closestEnemy = obj;    
+                }
             }
         }
     }
