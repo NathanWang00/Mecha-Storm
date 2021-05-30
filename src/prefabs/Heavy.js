@@ -24,7 +24,7 @@ class Heavy extends Phaser.Physics.Arcade.Sprite {
         this.setActive(true);
         this.setVisible(true);
         this.setAngle(90 + ang);
-        this.health = scoutHealth;
+        this.health = heavyHealth;
         this.accel = accel;
         this.angAccel = angAccel;
         this.power = power;

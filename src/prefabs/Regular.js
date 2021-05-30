@@ -16,6 +16,7 @@ class Regular extends Phaser.Physics.Arcade.Sprite {
         this.angAccel = 0;
         this.power = 0;
         this.bulletDrop = 0;
+        this.phase = 0;//behavior settings
     }
 
     spawn(x, y, accel, ang, angAccel, power, bullet) {
@@ -24,11 +25,14 @@ class Regular extends Phaser.Physics.Arcade.Sprite {
         this.setActive(true);
         this.setVisible(true);
         this.setAngle(90 + ang);
-        this.health = scoutHealth;
+        this.health = regularHealth;
         this.accel = accel;
         this.angAccel = angAccel;
         this.power = power;
         this.bulletDrop = bullet;
+
+        this.phase = 0;
+        this.shootDelay = regularShootDelay;
 
         /*this.shoot = this.scene.time.delayedCall(1000, () => {
             this.scene.spawnFast(this.x, this.y, this.scene);
@@ -40,12 +44,49 @@ class Regular extends Phaser.Physics.Arcade.Sprite {
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
         if (this.bullet.enable) {
+            if (this.phase == 0) {
+                if (this.bullet.speed > regularMinSpeed - this.accel * delta / 60) {
+                    this.bullet.setSpeed(this.bullet.speed + this.accel * delta / 60);
+                } else {
+                    this.bullet.setSpeed(regularMinSpeed);
+                    this.phase = 1;
+                    this.accel = 0;
+                    this.shootDelay = 0;
+                    this.phaseSwitch = this.scene.time.delayedCall(4000, () => {
+                        this.phase = 2;
+                        this.accel = 10;
+                    }, null, this.scene);
+                }
+            }
+            if (this.phase == 1) {
+                if (this.shootDelay > 0) {
+                    this.shootDelay -= delta / 60;
+                } else {
+                    this.shootDelay = regularShootDelay;
+                    var playerAng = this.scene.angToPlayer(this.x, this.y);
+                    for (let index = 0; index < 5; index++) {
+                        this.scene.spawnBasic(this.x, this.y, this.scene, playerAng - 40 + index * 20);
+                    }
+                    this.secondShot = this.scene.time.delayedCall(500, () => {
+                        for (let index = 0; index < 4; index++) {
+                            this.scene.spawnBasic(this.x, this.y, this.scene, playerAng - 30 + index * 20);
+                        }
+                    }, null, this.scene);
+                }
+                /*if(this.shootDelay > 0) {
+                    this.shootDelay -= delta / 60;
+                    console.log(this.shootDelay);
+                } else {
+                    this.shootDelay = regularShootDelay + Phaser.Math.Between(-0.5, 0.5);
+                    this.scene.spawnFast(this.x ,this.y, this.scene, this.scene.angToPlayer(this.x, this.y) + Phaser.Math.Between(-30, 30));
+                }*///Gatling
+            }
+            if (this.phase == 2) {
+                if (this.bullet.setSpeed(this.bullet.speed + this.accel * delta / 60));
+            }
+
             this.setAngle(this.angle + this.angAccel * delta / 60);
-            /*if (this.bullet.speed < maxScoutSpeed - this.accel * delta / 60) {
-                this.bullet.setSpeed(this.bullet.speed + this.accel * delta / 60);
-            } else {
-                this.bullet.setSpeed(maxScoutSpeed);
-            }*/
+            
             
             if (this.y > this.height + game.config.height || this.y < -400 || this.x > game.config.width + 400 || this.x < -400) {
                 this.death();
@@ -72,7 +113,8 @@ class Regular extends Phaser.Physics.Arcade.Sprite {
 
     death() {
         this.body.reset(0, 0);
-        //this.scene.time.removeEvent(this.shoot);
+        this.scene.time.removeEvent(this.secondShot);
+        this.scene.time.removeEvent(this.phaseSwitch);
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;

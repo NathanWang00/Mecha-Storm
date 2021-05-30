@@ -601,8 +601,8 @@ class Play extends Phaser.Scene {
         switch(tempTrack) {
             case 1 : 
                 //x, y, scene, speed, accel, ang, angAccel, power(#), ammo(%), bulletOption(0-2)
-                //520 = half
-                this.scoutGroup.spawn(320, -50, this, scoutSpeed, 20, 0, -2, 1, 0.5);
+                //180-900, 1/4 = 360, 1/2 = 540, 3/4 = 720
+                this.scoutGroup.spawn(340, -50, this, scoutSpeed, 20, -20, -2.5, 1, 0);
                 if (wave == null) {
                     this.spawn = this.time.delayedCall(300, this.spawnWave, [1], this);
                     this.spawn = this.time.delayedCall(600, this.spawnWave, [1], this);
@@ -611,7 +611,7 @@ class Play extends Phaser.Scene {
 
             case 2 :
                 //x, y, scene, speed, accel, ang, angAccel, power(#), ammo(%), bulletOption(0-2)
-                this.scoutGroup.spawn(720, -50, this, scoutSpeed, 20, 0, 2, 1, 0.5);
+                this.scoutGroup.spawn(740, -50, this, scoutSpeed, 20, 20, 2.5, 1, 0);
                 if (wave == null) {
                     this.spawn = this.time.delayedCall(300, this.spawnWave, [2], this);
                     this.spawn = this.time.delayedCall(600, this.spawnWave, [2], this);
@@ -619,11 +619,19 @@ class Play extends Phaser.Scene {
             break;
 
             case 3 :
-                this.regularGroup.spawn(520, -75, this, regularSpeed, 20, 0, 0, 3, 1);
+                this.regularGroup.spawn(540, -75, this, regularSpeed, -4, 0, 0, 3, 1);
+                this.spawn = this.time.delayedCall(4000, () => {
+                    this.regularGroup.spawn(360, -75, this, regularSpeed, -4, 0, 0, 3, 1);
+                }, null, this);
+                this.spawn = this.time.delayedCall(8000, () => {
+                    this.regularGroup.spawn(720, -75, this, regularSpeed, -4, 0, 0, 3, 1);
+                }, null, this);
+                delay = 12000;
             break;
 
             case 4 :
-                this.heavyGroup.spawn(520, -75, this, heavySpeed, 0, 0, 0, 5, 1);    
+                this.heavyGroup.spawn(540, -75, this, heavySpeed, 0, 0, 0, 5, 1);
+                delay = 5000;  
             break;
 
             case 5 :
@@ -680,24 +688,29 @@ class Play extends Phaser.Scene {
     spawnPickup(x, y, power, ammo) {
         var spawnCode = this.spawnAmmo(x, y, ammo);
         if (spawnCode == -1){
-            this.spawnPower(x, y, power, false);
+            if (power <= 1) {
+                if (Phaser.Math.Between(0, 1) <= power) {
+                    this.spawnPower(x, y, power, true);
+                }
+            } else {
+                this.spawnPower(x, y, power, false);
+            }
         } else {
             this.spawnPower(x, y, power + spawnCode, true);
         }
     }
 
     spawnAmmo(x, y, chance) {
-        if(this.ammo < this.maxAmmo) {
-            if (Phaser.Math.Between(0, 1) <= chance) {
-                this.ammoGroup.spawn(Phaser.Math.Between(-10, 10) + x,Phaser.Math.Between(-10, 10) + y);
-                return -1;
+        if (chance > 0) {
+            if(this.ammo < this.maxAmmo) {
+                if (Phaser.Math.Between(0, 1) <= chance) {
+                    this.ammoGroup.spawn(Phaser.Math.Between(-10, 10) + x,Phaser.Math.Between(-10, 10) + y);
+                }
+            } else {
+                return 1;
             }
-            else {
-                return 0;
-            }
-        } else {
-            return Phaser.Math.Between(0, 1);
         }
+        return -1;
     }
 
     spawnPower(x, y, amount, center) {

@@ -13,7 +13,7 @@ let config = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true,
+            debug: false,
             gravity: {
                 y: 0
             }
@@ -34,7 +34,7 @@ let tracerSpeed = 1900;
 let baseDamage = 150;
 let tracerDamage = 300;
 let lives = 2;
-let focusModifier = 0.6;
+let focusModifier = 0.5;
 let gunFollowSpeed = 400;
 let gunFocusSpeed = 800;
 let baseAmmo = 5;
@@ -52,6 +52,8 @@ let scoutPoints = 50;
 let regularHealth = 500;
 let regularSpeed = 150;
 let regularPoints = 125;
+let regularMinSpeed = 50;
+let regularShootDelay = 25;
 
 let heavyHealth = 1500;
 let heavySpeed = 95;
@@ -62,7 +64,7 @@ let bbMin = 175;
 let bbAccel = -50;
 
 let fbSpeed = 700;
-let fbMin = 200;
+let fbMin = 50;
 let fbAccel = 100;
 
 //power upgrades
@@ -74,7 +76,7 @@ let pTracerSpeed = 3500;
 let pTracerDamage = 500;
 
 let debug = true;
-let startTrack = 2;
+let startTrack = 1;
 
 /* 
 

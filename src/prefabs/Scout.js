@@ -30,7 +30,7 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
         this.power = power;
         this.bulletDrop = bullet;
 
-        this.shoot = this.scene.time.delayedCall(1000, () => {
+        this.shoot = this.scene.time.delayedCall(425, () => {
             this.scene.spawnFast(this.x, this.y, this.scene);
             //this.scene.spawnFast(this.x, this.y, this.scene, this.scene.angToPlayer(this.x, this.y) + 30);
             //this.scene.spawnFast(this.x, this.y, this.scene, this.scene.angToPlayer(this.x, this.y) - 30);
@@ -63,7 +63,7 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
                 this.scene.scoreText.text = this.scene.score;
                 this.scene.scoreTextShadow.text = this.scene.score;
 
-                this.scene.spawnCircle(this.x, this.y, this.scene, 8, null);
+                this.scene.spawnCircle(this.x, this.y, this.scene, 6, null);
                 this.scene.spawnPickup(this.x, this.y, this.power, this.bulletDrop);
                 this.death();
                 this.scene.botHurtSfx.play();

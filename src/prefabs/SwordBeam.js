@@ -31,8 +31,9 @@ class SwordBeam extends Phaser.Physics.Arcade.Sprite {
         }
 
         this.piercing = true;
-        this.unpierce = this.scene.time.delayedCall(100, () => {
+        this.unpierce = this.scene.time.delayedCall(50, () => {
             this.piercing = false;
+            this.hitArray = [];
         }, null, this);
 
         if (this.scene.powerMode) {
