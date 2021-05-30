@@ -602,7 +602,7 @@ class Play extends Phaser.Scene {
             case 1 : 
                 //x, y, scene, speed, accel, ang, angAccel, power(#), ammo(%), bulletOption(0-2)
                 //180-900, 1/4 = 360, 1/2 = 540, 3/4 = 720
-                this.scoutGroup.spawn(340, -50, this, scoutSpeed, 20, -20, -2.5, 1, 0);
+                this.scoutGroup.spawn(340, -50, this, scoutSpeed, 20, -20, -2.5, 1, 0, 1);
                 if (wave == null) {
                     this.spawn = this.time.delayedCall(300, this.spawnWave, [1], this);
                     this.spawn = this.time.delayedCall(600, this.spawnWave, [1], this);
@@ -611,7 +611,7 @@ class Play extends Phaser.Scene {
 
             case 2 :
                 //x, y, scene, speed, accel, ang, angAccel, power(#), ammo(%), bulletOption(0-2)
-                this.scoutGroup.spawn(740, -50, this, scoutSpeed, 20, 20, 2.5, 1, 0);
+                this.scoutGroup.spawn(740, -50, this, scoutSpeed, 20, 20, 2.5, 1, 0, 1);
                 if (wave == null) {
                     this.spawn = this.time.delayedCall(300, this.spawnWave, [2], this);
                     this.spawn = this.time.delayedCall(600, this.spawnWave, [2], this);
@@ -630,14 +630,57 @@ class Play extends Phaser.Scene {
             break;
 
             case 4 :
-                this.heavyGroup.spawn(540, -75, this, heavySpeed, 0, 0, 0, 5, 1);
-                delay = 5000;  
+                this.scoutGroup.spawn(300, -50, this, scoutSpeed, 30, 0, 0, 1, 0, 2);
+                if (wave == null) {
+                    this.spawn = this.time.delayedCall(300, this.spawnWave, [4], this);
+                    this.spawn = this.time.delayedCall(600, this.spawnWave, [4], this);
+                }
+                delay = 2000;  
             break;
 
+            //#region tracking scouts
             case 5 :
+                this.scoutGroup.spawn(780, -50, this, scoutSpeed, 30, 0, 0, 1, 0, 2);
+                if (wave == null) {
+                    this.spawn = this.time.delayedCall(300, this.spawnWave, [tempTrack], this);
+                    this.spawn = this.time.delayedCall(600, this.spawnWave, [tempTrack], this);
+                }
+                delay = 2000;  
+            break;
+
+            case 6 :
+                this.scoutGroup.spawn(420, -50, this, scoutSpeed, 30, 0, 0, 1, 0, 2);
+                if (wave == null) {
+                    this.spawn = this.time.delayedCall(300, this.spawnWave, [tempTrack], this);
+                    this.spawn = this.time.delayedCall(600, this.spawnWave, [tempTrack], this);
+                }
+                delay = 2000;  
+            break;
+
+            case 7 :
+                this.scoutGroup.spawn(660, -50, this, scoutSpeed, 30, 0, 0, 1, 0, 2);
+                if (wave == null) {
+                    this.spawn = this.time.delayedCall(300, this.spawnWave, [tempTrack], this);
+                    this.spawn = this.time.delayedCall(600, this.spawnWave, [tempTrack], this);
+                }
+                delay = 2000;  
+            break;
+
+            case 8 :
+                this.scoutGroup.spawn(540, -50, this, scoutSpeed, 30, 0, 0, 1, 0, 2);
+                if (wave == null) {
+                    this.spawn = this.time.delayedCall(300, this.spawnWave, [tempTrack], this);
+                    this.spawn = this.time.delayedCall(600, this.spawnWave, [tempTrack], this);
+                }
+                delay = 2000;  
+            break;
+
+            //#endregion tracking scouts
+
+            case 9 :
                 //this.scoutGroup.spawn(320, -50, this, scoutSpeed, 10, 0, -1, 1, 0.5);
                 delay = 1000;
-                this.spawnTrack = 1;
+                this.spawnTrack = startTrack-1;
             break;
 
             default :

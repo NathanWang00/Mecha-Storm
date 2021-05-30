@@ -16,9 +16,11 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
         this.angAccel = 0;
         this.power = 0;
         this.bulletDrop = 0;
+        this.pattern = 1;
+        this.angleTurn = 1;
     }
 
-    spawn(x, y, accel, ang, angAccel, power, bullet) {
+    spawn(x, y, accel, ang, angAccel, power, bullet, pattern) {
         this.body.enable = true;
         this.body.reset(x, y);
         this.setActive(true);
@@ -29,17 +31,46 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
         this.angAccel = angAccel;
         this.power = power;
         this.bulletDrop = bullet;
+        this.pattern = pattern;
+        this.angleTurn = 1;
 
-        this.shoot = this.scene.time.delayedCall(425, () => {
-            this.scene.spawnFast(this.x, this.y, this.scene);
-            //this.scene.spawnFast(this.x, this.y, this.scene, this.scene.angToPlayer(this.x, this.y) + 30);
-            //this.scene.spawnFast(this.x, this.y, this.scene, this.scene.angToPlayer(this.x, this.y) - 30);
-        }, null, this.scene);
+        if (pattern == 1) {
+            this.shoot = this.scene.time.delayedCall(425, () => {
+                this.scene.spawnFast(this.x, this.y, this.scene);
+                //this.scene.spawnFast(this.x, this.y, this.scene, this.scene.angToPlayer(this.x, this.y) + 30);
+                //this.scene.spawnFast(this.x, this.y, this.scene, this.scene.angToPlayer(this.x, this.y) - 30);
+            }, null, this.scene);
+        }
+        if (pattern == 2) {
+            this.shoot = this.scene.time.delayedCall(2000, () => {
+                this.scene.spawnCircle(this.x, this.y, this.scene, 8, null);
+                this.scene.botHurtSfx.play();
+                this.death();
+            }, null, this.scene);
+        }
     }
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
         if (this.bullet.enable) {
+            if (this.pattern == 2) {//player tracking, loses turning power if angle is too big
+                if (this.angle > 150 || this.angle < 30) {
+                    this.angleTurn = 0.7;
+                }
+                var angToPlayer = this.scene.angToPlayer(this.x, this.y);
+                var angleDifference = angToPlayer - this.angle;
+
+                if (angleDifference < 0) {
+                    angleDifference *= -1;
+                }
+                if (angleDifference > 1 && angleDifference < 180) {
+                    if (angToPlayer > this.angle) {
+                        this.angAccel = 5 * this.angleTurn;
+                    } else {
+                        this.angAccel = -5 * this.angleTurn;
+                    }
+                }
+            }
             this.setAngle(this.angle + this.angAccel * delta / 60);
             if (this.bullet.speed < maxScoutSpeed - this.accel * delta / 60) {
                 this.bullet.setSpeed(this.bullet.speed + this.accel * delta / 60);
@@ -47,7 +78,7 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
                 this.bullet.setSpeed(maxScoutSpeed);
             }
             
-            if (this.y > this.height + game.config.height || this.y < -400 || this.x > game.config.width + 400 || this.x < -400) {
+            if (this.y > this.height + game.config.height || this.y < -400 || this.x > 1000 || this.x < 100) {
                 this.death();
             }
         }
@@ -63,7 +94,12 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
                 this.scene.scoreText.text = this.scene.score;
                 this.scene.scoreTextShadow.text = this.scene.score;
 
-                this.scene.spawnCircle(this.x, this.y, this.scene, 6, null);
+                if (this.pattern == 1) {
+                    this.scene.spawnCircle(this.x, this.y, this.scene, 6, null);
+                } else {
+                    this.scene.spawnCircle(this.x, this.y, this.scene, 8, null);
+                }
+                
                 this.scene.spawnPickup(this.x, this.y, this.power, this.bulletDrop);
                 this.death();
                 this.scene.botHurtSfx.play();

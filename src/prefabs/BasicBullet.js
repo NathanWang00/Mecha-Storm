@@ -23,7 +23,7 @@ class BasicBullet extends Phaser.Physics.Arcade.Sprite {
                 this.bullet.setSpeed(bbMin);
             }
         }
-        if (this.y < -this.height || this.y > this.height + game.config.height) {
+        if (this.y > this.height + game.config.height || this.y < -400 || this.x > 1000 || this.x < 100) {
             this.stop();
         }
     }
