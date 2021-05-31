@@ -638,7 +638,7 @@ class Play extends Phaser.Scene {
                 delay = 2000;  
             break;
 
-            //#region tracking scouts
+            //#region tracking scouts 5-8
             case 5 :
                 this.scoutGroup.spawn(780, -50, this, scoutSpeed, 30, 0, 0, 1, 0, 2);
                 if (wave == null) {
@@ -678,6 +678,29 @@ class Play extends Phaser.Scene {
             //#endregion tracking scouts
 
             case 9 :
+                this.heavyGroup.spawn(540, -100, this, heavySpeed, -1.25, 0, 0, 6, 1);
+                this.spawn = this.time.delayedCall(500, () => {//I'm sorry for whoever has to look at this
+                    this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 1, 0, 3);
+                }, null, this);
+                this.spawn = this.time.delayedCall(800, () => {
+                    this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 0, 1, 3);
+                }, null, this);
+                this.spawn = this.time.delayedCall(1100, () => {
+                    this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 1, 0, 3);
+                }, null, this);
+                this.spawn = this.time.delayedCall(2800, () => {
+                    this.scoutGroup.spawn(780, -50, this, scoutSpeed + 200, 20, -10, 4.5, 1, 0, 3);
+                }, null, this);
+                this.spawn = this.time.delayedCall(3100, () => {
+                    this.scoutGroup.spawn(780, -50, this, scoutSpeed + 200, 20, -10, 4.5, 0, 1, 3);
+                }, null, this);
+                this.spawn = this.time.delayedCall(3400, () => {
+                    this.scoutGroup.spawn(780, -50, this, scoutSpeed + 200, 20, -10, 4.5, 1, 0, 3);
+                }, null, this);
+                delay = 5000;
+            break;
+
+            case 10 :
                 //this.scoutGroup.spawn(320, -50, this, scoutSpeed, 10, 0, -1, 1, 0.5);
                 delay = 1000;
                 this.spawnTrack = startTrack-1;

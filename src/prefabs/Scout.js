@@ -48,6 +48,11 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
                 this.death();
             }, null, this.scene);
         }
+        if (pattern == 3) {
+            this.shoot = this.scene.time.delayedCall(2800, () => {
+                this.death();
+            }, null, this.scene);
+        }
     }
 
     preUpdate(time, delta) {

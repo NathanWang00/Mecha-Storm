@@ -16,6 +16,7 @@ class Heavy extends Phaser.Physics.Arcade.Sprite {
         this.angAccel = 0;
         this.power = 0;
         this.bulletDrop = 0;
+        this.phase = 0;
     }
 
     spawn(x, y, accel, ang, angAccel, power, bullet) {
@@ -29,6 +30,7 @@ class Heavy extends Phaser.Physics.Arcade.Sprite {
         this.angAccel = angAccel;
         this.power = power;
         this.bulletDrop = bullet;
+        this.phase = 0;
 
         /*this.shoot = this.scene.time.delayedCall(1000, () => {
             this.scene.spawnFast(this.x, this.y, this.scene);
@@ -40,12 +42,26 @@ class Heavy extends Phaser.Physics.Arcade.Sprite {
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
         if (this.bullet.enable) {
+            if (this.phase == 0) {
+                if (this.bullet.speed > -this.accel * delta / 60) {
+                    this.bullet.setSpeed(this.bullet.speed + this.accel * delta / 60);
+                } else {
+                    this.bullet.setSpeed(0);
+                    this.phase = 2;
+                    this.accel = 5;
+                    this.shootDelay = 0;
+                    /*this.phaseSwitch = this.scene.time.delayedCall(4000, () => {
+                        this.phase = 2;
+                        this.accel = 10;
+                    }, null, this.scene);*/
+                }
+            }
+
+            if (this.phase == 2) {
+                this.bullet.setSpeed(this.bullet.speed - this.accel * delta / 60);
+            }  
+
             this.setAngle(this.angle + this.angAccel * delta / 60);
-            /*if (this.bullet.speed < maxScoutSpeed - this.accel * delta / 60) {
-                this.bullet.setSpeed(this.bullet.speed + this.accel * delta / 60);
-            } else {
-                this.bullet.setSpeed(maxScoutSpeed);
-            }*/
             
             if (this.y > this.height + game.config.height || this.y < -400 || this.x > game.config.width + 400 || this.x < -400) {
                 this.death();

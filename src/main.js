@@ -55,7 +55,7 @@ let regularPoints = 125;
 let regularMinSpeed = 50;
 let regularShootDelay = 25;
 
-let heavyHealth = 1500;
+let heavyHealth = 1750;
 let heavySpeed = 95;
 let heavyPoints = 500;
 
