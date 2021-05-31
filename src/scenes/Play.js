@@ -231,6 +231,14 @@ class Play extends Phaser.Scene {
 
         }
 
+        this.healthOrigins = [];
+        for (let i = 0; i < 3; i++) {
+
+            this.healthOrigins.push(this.livesArray[i].x);
+            console.log(this.healthOrigins[i]);
+
+        }
+
         // ammo counter
 
         playConfig.fontSize = '40px';
@@ -431,26 +439,60 @@ class Play extends Phaser.Scene {
                 }
             }
 
-            if (Phaser.Input.Keyboard.JustDown(this.gunKey) && this.ammo > 0) {
-                this.gunShot.play(); //Gunshot sfx
-                var convertedAngle = Phaser.Math.DegToRad(this.gun.angle-90);
-                var gunOffset = 70;
-                this.tracerGroup.shootTracer(this.gun.x + gunOffset * Math.cos(convertedAngle), this.gun.y + gunOffset * Math.sin(convertedAngle), this, this.gun.angle-90);
-                this.ammo--;
-                this.ammoCount.text = this.ammo + "/" + baseAmmo;;
-                this.ammoCountShadow.text = this.ammo + "/" + baseAmmo;;
-                if (this.powerMode) {
-                    this.gun.setTexture('gunShotUpgrade');
-                } else {
-                    this.gun.setTexture('gunShot');
-                }
-                this.shot = this.time.delayedCall(100, () => {
+            if (Phaser.Input.Keyboard.JustDown(this.gunKey)) {
+
+                if (this.ammo > 0) {
+
+                    this.gunShot.play(); //Gunshot sfx
+                    var convertedAngle = Phaser.Math.DegToRad(this.gun.angle-90);
+                    var gunOffset = 70;
+                    this.tracerGroup.shootTracer(this.gun.x + gunOffset * Math.cos(convertedAngle), this.gun.y + gunOffset * Math.sin(convertedAngle), this, this.gun.angle-90);
+                    this.ammo--;
+                    this.ammoCount.text = this.ammo + "/" + baseAmmo;;
+                    this.ammoCountShadow.text = this.ammo + "/" + baseAmmo;;
                     if (this.powerMode) {
-                        this.gun.setTexture('gunUpgrade');
+                        this.gun.setTexture('gunShotUpgrade');
                     } else {
-                        this.gun.setTexture('gun');
+                        this.gun.setTexture('gunShot');
                     }
-                }, null, this);
+                    this.shot = this.time.delayedCall(100, () => {
+                        if (this.powerMode) {
+                            this.gun.setTexture('gunUpgrade');
+                        } else {
+                            this.gun.setTexture('gun');
+                        }
+                    }, null, this);
+
+                }
+        
+                else if (this.ammo < 1) {
+
+                    this.ammoOrigin = this.ammoCountShadow.x;
+                    this.tweens.addCounter({
+
+                        from: 0,
+                        to: 10,
+                        duration: 50,
+                        ease: Phaser.Math.Easing.Linear,
+                        loop: 1,
+                        yoyo: true,
+                        onUpdate: tween => {
+    
+                            this.ammoValue = tween.getValue();
+                            this.ammoCountShadow.x = this.ammoOrigin + this.ammoValue ;
+                            this.ammoCount.x = this.ammoOrigin + 2 + this.ammoValue;
+                                
+                        },
+                        onComplete: function() {
+
+                            // DEBOUNCE RESET
+
+                        }
+
+                    }); 
+
+                }
+
             }
 
             // gun focus
@@ -819,6 +861,32 @@ class Play extends Phaser.Scene {
                     this.player.alpha = 1;
                     this.pingPong = 0;
                 }, null, this);
+
+                // damage tween
+
+                this.tweens.addCounter({
+
+                    from: 0,
+                    to: 10,
+                    duration: 50,
+                    ease: Phaser.Math.Easing.Linear,
+                    loop: 1,
+                    yoyo: true,
+                    onUpdate: tween => {
+    
+                        this.healthValue = tween.getValue();
+
+                        for (let i = 0; i < 3; i++) {
+                            
+                            this.livesArray[i].x = this.healthOrigins[i] + this.healthValue;
+                            this.damagedArray[i].x = this.healthOrigins[i] + this.healthValue;
+
+                        }
+                                
+                    }
+
+                }); 
+
             }
             this.playerHitSfx.play();
             this.noAmmoSfx.play();
