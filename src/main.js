@@ -4,7 +4,7 @@
 
 
 let config = {
-    type: Phaser.CANVAS,
+    type: Phaser.WEBGL,
     width: 1080,
     height: 720,
     scale: {

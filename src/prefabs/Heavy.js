@@ -72,6 +72,31 @@ class Heavy extends Phaser.Physics.Arcade.Sprite {
     hit(damage) {
         if (this.active) {
             this.health -= damage;
+
+            // damage tween
+
+            if (this.health > 0) {
+ 
+                this.noColor = Phaser.Display.Color.ValueToColor(0xFFFFFF);
+                this.damageColor = Phaser.Display.Color.ValueToColor(0xFF0000);
+                this.scene.tweens.addCounter({
+
+                    from: 0,
+                    to: 100,
+                    duration: 200,
+                    ease: Phaser.Math.Easing.Sine.In,
+                    loop: 0,
+                    onUpdate: tween => {
+
+                        this.value = tween.getValue();
+                        this.colorObject = Phaser.Display.Color.Interpolate.ColorWithColor(this.damageColor, this.noColor, 100, this.value);
+                        this.color = Phaser.Display.Color.GetColor(this.colorObject.r, this.colorObject.g, this.colorObject.b);
+                        this.setTint(this.color);
+                    }
+                });
+
+            }
+
             if (this.health <= 0) {
                 // update score
                 this.scene.score += heavyPoints;
