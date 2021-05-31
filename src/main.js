@@ -1,4 +1,4 @@
-// 120 Bullet Hell (temp) by Team Radicool Dragonfire Ninjas
+// Mecha Storm by Team Radicool Dragonfire Ninjas
 // Made for the AGPM and CMPM 120-1 classes, section E
 // By Liam Booher, Ashley Chapp, Ethan Tung, and Nathan Wang
 
