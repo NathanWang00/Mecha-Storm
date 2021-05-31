@@ -467,7 +467,7 @@ class Play extends Phaser.Scene {
         
                 else if (this.ammo < 1) {
 
-                    this.ammoOrigin = this.ammoCountShadow.x;
+                    this.ammoOrigin = 107;
                     this.tweens.addCounter({
 
                         from: 0,
