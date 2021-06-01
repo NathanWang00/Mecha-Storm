@@ -5,7 +5,7 @@ class BasicBulletGroup extends Phaser.Physics.Arcade.Group
 
         this.createMultiple({
             classType: BasicBullet,
-            frameQuantity: 100,
+            frameQuantity: 150,
             active: false,
             visible: false,
             runChildUpdate: true,

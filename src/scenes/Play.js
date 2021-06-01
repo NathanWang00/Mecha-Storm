@@ -744,6 +744,15 @@ class Play extends Phaser.Scene {
                 this.spawn = this.time.delayedCall(6700, () => {
                     this.scoutGroup.spawn(780, -50, this, scoutSpeed + 200, 20, -10, 4.5, 1, 0, 3);
                 }, null, this);
+                this.spawn = this.time.delayedCall(10200, () => {
+                    this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 1, 0, 3);
+                }, null, this);
+                this.spawn = this.time.delayedCall(10500, () => {
+                    this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 0, 1, 3);
+                }, null, this);
+                this.spawn = this.time.delayedCall(10800, () => {
+                    this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 1, 0, 3);
+                }, null, this);
                 delay = 16000;
             break;
 
@@ -809,6 +818,12 @@ class Play extends Phaser.Scene {
     spawnHeavyKids(obj, scene) {
         this.basicBulletGroup.shootBullet(obj.x, obj.y, scene, obj.angle + 90, 3);
         this.basicBulletGroup.shootBullet(obj.x, obj.y, scene, obj.angle - 90, 3);
+    }
+
+    spawnTrail(obj, scene) {
+        this.basicBulletGroup.shootBullet(obj.x, obj.y, scene, obj.angle + 150, 1);
+        this.basicBulletGroup.shootBullet(obj.x, obj.y, scene, obj.angle - 150, 1);
+        console.log("test");
     }
 
     spawnPickup(x, y, power, ammo) {

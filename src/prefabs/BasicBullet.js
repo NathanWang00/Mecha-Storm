@@ -21,7 +21,7 @@ class BasicBullet extends Phaser.Physics.Arcade.Sprite {
             this.pattern = pattern;
         }
         if (pattern == 2) {
-            this.timer = this.scene.time.addEvent({
+            this.kids = this.scene.time.addEvent({
                 delay: 450,
                 callback: this.scene.spawnHeavyKids,
                 args: [this, this.scene],
@@ -34,7 +34,6 @@ class BasicBullet extends Phaser.Physics.Arcade.Sprite {
             this.timer = this.scene.time.delayedCall(500, () => {
                 this.accel = 5;
                 this.bullet.setSpeed(10);
-                console.log("test");
             }, null, this.scene);
         }
     }
@@ -76,5 +75,6 @@ class BasicBullet extends Phaser.Physics.Arcade.Sprite {
         if (this.timer != null) {
             this.timer.remove();
         }
+        this.scene.time.removeEvent(this.kids);
     }
 }

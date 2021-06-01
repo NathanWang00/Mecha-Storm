@@ -34,21 +34,29 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
         this.pattern = pattern;
         this.angleTurn = 1;
 
-        if (pattern == 1) {
+        if (pattern == 1) {//basic shooters
             this.shoot = this.scene.time.delayedCall(425, () => {
                 this.scene.spawnFast(this.x, this.y, this.scene);
                 //this.scene.spawnFast(this.x, this.y, this.scene, this.scene.angToPlayer(this.x, this.y) + 30);
                 //this.scene.spawnFast(this.x, this.y, this.scene, this.scene.angToPlayer(this.x, this.y) - 30);
             }, null, this.scene);
         }
-        if (pattern == 2) {
+        if (pattern == 2) {//suicide bots
+            this.trail = this.scene.time.addEvent({
+                delay: 600,
+                callback: this.scene.spawnTrail,
+                args: [this, this.scene],
+                callbackScope: this.scene,
+                loop: true
+            })
+
             this.shoot = this.scene.time.delayedCall(2000, () => {
                 this.scene.spawnCircle(this.x, this.y, this.scene, 8, null);
                 this.scene.botHurtSfx.play();
                 this.death();
             }, null, this.scene);
         }
-        if (pattern == 3) {
+        if (pattern == 3) {//heavy circle
             this.shoot = this.scene.time.delayedCall(2800, () => {
                 this.death();
             }, null, this.scene);
@@ -139,7 +147,10 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
 
     death() {
         this.body.reset(0, 0);
-        this.scene.time.removeEvent(this.shoot);
+        if (this.shoot != null) {
+            this.shoot.remove();
+        }
+        this.scene.time.removeEvent(this.trail);
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;
