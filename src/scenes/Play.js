@@ -46,6 +46,7 @@ class Play extends Phaser.Scene {
         this.load.image('swordIconRegular', './assets/SwordIcon.png');
         this.load.image('swordIconUpgraded', './assets/SwordIconUpgraded.png');
         this.load.image('cloudScroll', './assets/CloudScroll.png');
+        this.load.image('cloudScroll2', './assets/CloudScroll2.png');
 
         //SFX load
         this.load.audio('swordBeamFire', ['assets/placeholderSwordShot.wav']);
@@ -59,12 +60,14 @@ class Play extends Phaser.Scene {
         this.load.audio('efSfx1', ['assets/EnemyFire01.wav']);
         this.load.audio('efSfx2', ['assets/EnemyFire02.wav']);
         this.load.audio('efSfx3', ['assets/EnemyFire03.wav']);
+        this.load.audio('soundtrack', ['assets/soundtrack.wav']);
     }
 
     create() {
         //Background Scenery
         this.cameras.main.setBackgroundColor('#FFFFFF');
         this.sceneBackground = this.add.image(540, 360, 'sceneBackground');
+        this.cloudScroll2 = this.add.tileSprite(180, 0, 0, 0, 'cloudScroll2').setOrigin(0,0);
         this.cloudScroll = this.add.tileSprite(180, 0, 0, 0, 'cloudScroll').setOrigin(0,0);
         this.towerScroll = this.add.tileSprite(180, 0, 0, 0, 'towerScroll').setOrigin(0,0);
 
@@ -80,6 +83,19 @@ class Play extends Phaser.Scene {
         this.efSfx1 = this.sound.add('efSfx1');
         this.efSfx2 = this.sound.add('efSfx2');
         this.efSfx3 = this.sound.add('efSfx3');
+
+        //Music
+        this.soundtrack = this.sound.add('soundtrack');
+        var musicConfig={
+            mute: false,
+            volume: .15,
+            rate: 1,
+            detune: 0,
+            seek: 0,
+            loop: true,
+            delay: 0
+        }
+        this.soundtrack.play(musicConfig);
 
         // player 
         this.player = this.physics.add.sprite(520, 650, 'player');
@@ -373,6 +389,7 @@ class Play extends Phaser.Scene {
         let tempSpeed = this.playerSpeed;
 
         //background scroll update
+        this.cloudScroll2.tilePositionY -= 1;
         this.cloudScroll.tilePositionY -= 2;
         this.towerScroll.tilePositionY -= 3;
 
@@ -911,6 +928,7 @@ class Play extends Phaser.Scene {
             if (this.lives <= 0) {
                 //game over stuff
                 console.log("game over");
+                this.soundtrack.stop();
                 this.registry.destroy();
                 this.events.off();
                 this.scene.restart();   
