@@ -783,7 +783,7 @@ class Play extends Phaser.Scene {
                 this.spawn = this.time.delayedCall(4360, () => {
                     this.regularGroup.spawn(730, -75, this, regularSpeed, -6, 0, 0, 3, 1, 2);
                 }, null, this);
-                delay = 10000;
+                delay = 20000;
             break;
 
             case 12 :
