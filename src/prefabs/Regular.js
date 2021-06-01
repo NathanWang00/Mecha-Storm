@@ -64,10 +64,12 @@ class Regular extends Phaser.Physics.Arcade.Sprite {
                 } else {
                     this.shootDelay = regularShootDelay;
                     var playerAng = this.scene.angToPlayer(this.x, this.y);
+                    this.scene.efSfx2.play();
                     for (let index = 0; index < 5; index++) {
                         this.scene.spawnBasic(this.x, this.y, this.scene, playerAng - 40 + index * 20);
                     }
                     this.secondShot = this.scene.time.delayedCall(500, () => {
+                        this.scene.efSfx2.play();
                         for (let index = 0; index < 4; index++) {
                             this.scene.spawnBasic(this.x, this.y, this.scene, playerAng - 30 + index * 20);
                         }
