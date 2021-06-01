@@ -78,7 +78,7 @@ let pTracerSpeed = 3500;
 let pTracerDamage = 350;
 
 let debug = true;
-let startTrack = 8;
+let startTrack = 1;
 
 /* 
 
