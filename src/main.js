@@ -32,12 +32,12 @@ let swordSpeed = 600;
 let swingSpeed = 350;
 let tracerSpeed = 1900;
 let baseDamage = 150;
-let tracerDamage = 300;
+let tracerDamage = 225;
 let lives = 2;
 let focusModifier = 0.5;
 let gunFollowSpeed = 400;
 let gunFocusSpeed = 800;
-let baseAmmo = 5;
+let baseAmmo = 7;
 let swordDecay = 15;
 let powerIncrease = 0.1;
 let basePowerDecrease = 0.001;
@@ -54,8 +54,9 @@ let regularSpeed = 150;
 let regularPoints = 125;
 let regularMinSpeed = 50;
 let regularShootDelay = 25;
+let regulatShootDelay2 = 3.25;
 
-let heavyHealth = 1750;
+let heavyHealth = 1500;
 let heavySpeed = 95;
 let heavyPoints = 500;
 let heavyShootDelay = 50;
@@ -74,10 +75,10 @@ let pSwingSpeed = 275;
 let pSwordDamage = 200;
 let pSwordSpeed = 775;
 let pTracerSpeed = 3500;
-let pTracerDamage = 500;
+let pTracerDamage = 350;
 
 let debug = true;
-let startTrack = 1;
+let startTrack = 8;
 
 /* 
 

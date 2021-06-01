@@ -13,12 +13,12 @@ class RegularGroup extends Phaser.Physics.Arcade.Group
         })
     }
 
-    spawn(x, y, scene, speed, accel, ang, angAccel, power, bullet) {
+    spawn(x, y, scene, speed, accel, ang, angAccel, power, bullet, pattern) {
         this.runChildUpdate = true;
         var regular = this.getFirstDead(false);
         if (regular) {
             scene.enableBullet(regular, speed);
-            regular.spawn(x, y, accel, ang, angAccel, power, bullet);
+            regular.spawn(x, y, accel, ang, angAccel, power, bullet, pattern);
         }
     }
 }

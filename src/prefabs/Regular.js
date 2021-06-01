@@ -17,9 +17,11 @@ class Regular extends Phaser.Physics.Arcade.Sprite {
         this.power = 0;
         this.bulletDrop = 0;
         this.phase = 0;//behavior settings
+        this.pattern = 1;
+        this.trackPlayer = 0;
     }
 
-    spawn(x, y, accel, ang, angAccel, power, bullet) {
+    spawn(x, y, accel, ang, angAccel, power, bullet, pattern) {
         this.body.enable = true;
         this.body.reset(x, y);
         this.setActive(true);
@@ -30,9 +32,14 @@ class Regular extends Phaser.Physics.Arcade.Sprite {
         this.angAccel = angAccel;
         this.power = power;
         this.bulletDrop = bullet;
+        this.pattern = pattern;
 
         this.phase = 0;
         this.shootDelay = regularShootDelay;
+
+        if (pattern == 2) {
+            this.trackPlayer = this.scene.angToPlayer(this.x, this.y + 30);
+        }
 
         /*this.shoot = this.scene.time.delayedCall(1000, () => {
             this.scene.spawnFast(this.x, this.y, this.scene);
@@ -59,29 +66,46 @@ class Regular extends Phaser.Physics.Arcade.Sprite {
                 }
             }
             if (this.phase == 1) {
-                if (this.shootDelay > 0) {
-                    this.shootDelay -= delta / 60;
-                } else {
-                    this.shootDelay = regularShootDelay;
-                    var playerAng = this.scene.angToPlayer(this.x, this.y);
-                    this.scene.efSfx2.play();
-                    for (let index = 0; index < 5; index++) {
-                        this.scene.spawnBasic(this.x, this.y, this.scene, playerAng - 40 + index * 20);
-                    }
-                    this.secondShot = this.scene.time.delayedCall(500, () => {
+                if (this.pattern == 1) {
+                    if (this.shootDelay > 0) {
+                        this.shootDelay -= delta / 60;
+                    } else {
+                        this.shootDelay = regularShootDelay;
+                        var playerAng = this.scene.angToPlayer(this.x, this.y);
                         this.scene.efSfx2.play();
-                        for (let index = 0; index < 4; index++) {
-                            this.scene.spawnBasic(this.x, this.y, this.scene, playerAng - 30 + index * 20);
+                        for (let index = 0; index < 5; index++) {
+                            this.scene.spawnBasic(this.x, this.y, this.scene, playerAng - 40 + index * 20);
                         }
-                    }, null, this.scene);
+                        this.secondShot = this.scene.time.delayedCall(500, () => {
+                            this.scene.efSfx2.play();
+                            for (let index = 0; index < 4; index++) {
+                                this.scene.spawnBasic(this.x, this.y, this.scene, playerAng - 30 + index * 20);
+                            }
+                        }, null, this.scene);
+                    }
+                } else if (this.pattern == 2) {
+                    var angToPlayer = this.scene.angToPlayer(this.x, this.y + 30);
+                    var angleDifference = angToPlayer - this.trackPlayer;
+
+                    if (angleDifference < 0) {
+                        angleDifference *= -1;
+                    }
+                    if (angleDifference > 1) {
+                        if (angToPlayer > this.trackPlayer) {
+                            this.trackPlayer += 0.15;
+                        } else {
+                            this.trackPlayer -= 0.15;
+                        }
+                    }
+
+                    if(this.shootDelay > 0) {
+                        this.shootDelay -= delta / 60;
+                    } else {
+                        this.shootDelay = regulatShootDelay2 + Phaser.Math.Between(-0.3, 0.3);
+                        this.scene.spawnFast(this.x ,this.y + 30, this.scene, this.trackPlayer + Phaser.Math.Between(-15, 15));
+                        this.scene.efSfx2.play();
+                    }//Gatling
                 }
-                /*if(this.shootDelay > 0) {
-                    this.shootDelay -= delta / 60;
-                    console.log(this.shootDelay);
-                } else {
-                    this.shootDelay = regularShootDelay + Phaser.Math.Between(-0.5, 0.5);
-                    this.scene.spawnFast(this.x ,this.y, this.scene, this.scene.angToPlayer(this.x, this.y) + Phaser.Math.Between(-30, 30));
-                }*///Gatling
             }
             if (this.phase == 2) {
                 if (this.bullet.setSpeed(this.bullet.speed + this.accel * delta / 60));

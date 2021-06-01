@@ -347,6 +347,8 @@ class Play extends Phaser.Scene {
             }
         });
         this.physics.add.overlap(this.scoutGroup, this.hitbox, this.playerHurt, null, this);
+        this.physics.add.overlap(this.regularGroup, this.hitbox, this.playerHurt, null, this);
+        this.physics.add.overlap(this.heavyGroup, this.hitbox, this.playerHurt, null, this);
         this.physics.add.overlap(this.hitbox, this.basicBulletGroup, this.playerHurt, null, this);
         this.physics.add.overlap(this.hitbox, this.fastBulletGroup, this.playerHurt, null, this);
 
@@ -677,12 +679,12 @@ class Play extends Phaser.Scene {
             break;
 
             case 3 :
-                this.regularGroup.spawn(540, -75, this, regularSpeed, -4, 0, 0, 3, 1);
+                this.regularGroup.spawn(540, -75, this, regularSpeed, -4, 0, 0, 3, 1, 1);
                 this.spawn = this.time.delayedCall(4000, () => {
-                    this.regularGroup.spawn(360, -75, this, regularSpeed, -4, 0, 0, 3, 1);
+                    this.regularGroup.spawn(360, -75, this, regularSpeed, -4, 0, 0, 3, 1, 1);
                 }, null, this);
                 this.spawn = this.time.delayedCall(8000, () => {
-                    this.regularGroup.spawn(720, -75, this, regularSpeed, -4, 0, 0, 3, 1);
+                    this.regularGroup.spawn(720, -75, this, regularSpeed, -4, 0, 0, 3, 1, 1);
                 }, null, this);
                 delay = 13000;
             break;
@@ -763,11 +765,28 @@ class Play extends Phaser.Scene {
             break;
 
             case 10 :
-                //this.scoutGroup.spawn(320, -50, this, scoutSpeed, 10, 0, -1, 1, 0.5);
-                delay = 0;
+                this.scoutGroup.spawn(150, 0, this, scoutSpeed, 5, -30, 0, 1, 0, 2);
+                this.spawn = this.time.delayedCall(700, () => {
+                    this.scoutGroup.spawn(950, 0, this, scoutSpeed, 5, 30, 0, 0, 1, 2);
+                }, null, this);
+                this.spawn = this.time.delayedCall(1400, () => {
+                    this.scoutGroup.spawn(820, -20, this, scoutSpeed, 5, 0, 0, 0, 1, 2);
+                }, null, this);
+                this.spawn = this.time.delayedCall(1700, () => {
+                    this.scoutGroup.spawn(490, -50, this, scoutSpeed, 5, 0, 0, 0, 1, 2);
+                }, null, this);
+                delay = 4000;
             break;
 
             case 11 :
+                this.regularGroup.spawn(350, -75, this, regularSpeed, -6, 0, 0, 3, 1, 2);
+                this.spawn = this.time.delayedCall(4360, () => {
+                    this.regularGroup.spawn(730, -75, this, regularSpeed, -6, 0, 0, 3, 1, 2);
+                }, null, this);
+                delay = 10000;
+            break;
+
+            case 12 :
                 //this.scoutGroup.spawn(320, -50, this, scoutSpeed, 10, 0, -1, 1, 0.5);
                 delay = 0;
                 this.spawnTrack = startTrack-1;
