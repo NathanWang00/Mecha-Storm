@@ -6,22 +6,52 @@ class BasicBullet extends Phaser.Physics.Arcade.Sprite {
 
         this.stop();
         this.accel = 0;
+        this.pattern = 1;
+        this.scene = scene;
     }
 
-    shoot(x, y, angle) {
+    shoot(x, y, angle, pattern) {
         this.angle = angle;
         this.start();
         this.body.reset(x, y);
+        this.accel = bbAccel;
+        if (pattern == null) {
+            this.pattern = 1;
+        } else {
+            this.pattern = pattern;
+        }
+        if (pattern == 2) {
+            this.timer = this.scene.time.addEvent({
+                delay: 450,
+                callback: this.scene.spawnHeavyKids,
+                args: [this, this.scene],
+                callbackScope: this.scene,
+                loop: true
+            })
+        }
+        if (pattern == 3) {
+            this.accel = 0;
+            this.timer = this.scene.time.delayedCall(500, () => {
+                this.accel = 5;
+                this.bullet.setSpeed(10);
+                console.log("test");
+            }, null, this.scene);
+        }
     }
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
         if (this.bullet.enable) {
-            if (this.bullet.speed + bbAccel * delta / 60 > bbMin) {
-                this.bullet.setSpeed(this.bullet.speed + bbAccel * delta / 60);
-            } else if (bbAccel < 0) {
-                this.bullet.setSpeed(bbMin);
+            if (this.accel < 0) {
+                if (this.bullet.speed + this.accel * delta / 60 > bbMin) {
+                    this.bullet.setSpeed(this.bullet.speed + this.accel * delta / 60);
+                } else if (this.accel < 0) {
+                    this.bullet.setSpeed(bbMin);
+                }
+            } else {
+                this.bullet.setSpeed(this.bullet.speed + this.accel * delta / 60);
             }
+            
         }
         if (this.y > this.height + game.config.height || this.y < -400 || this.x > 1000 || this.x < 100) {
             this.stop();
@@ -43,5 +73,8 @@ class BasicBullet extends Phaser.Physics.Arcade.Sprite {
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;
+        if (this.timer != null) {
+            this.timer.remove();
+        }
     }
 }

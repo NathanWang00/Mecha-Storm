@@ -13,21 +13,24 @@ class BasicBulletGroup extends Phaser.Physics.Arcade.Group
         })
     }
 
-    shootBullet(x, y, scene, angle) {
+    shootBullet(x, y, scene, angle, pattern) {
         this.runChildUpdate = true;
         var bullet = this.getFirstDead(false);
+        var tempSpeed = bbSpeed;
+        if (pattern == 3) {
+            tempSpeed = 0;
+        }
         if (bullet) {
-            bullet.shoot(x, y, angle);
+            bullet.shoot(x, y, angle, pattern);
             if (bullet.bullet == null) {
                 //bullet.setOrigin(0.5, 0.5);
                 //bullet.setSize(50, 50, true);
-                bullet.body.setCircle(10, bullet.height/2 -10, bullet.width/2 - 10);
+                bullet.body.setCircle(7, bullet.height/2 - 7, bullet.width/2 - 7);
                 //tracer.setOffset(tracer, 0);
-                scene.enableBullet(bullet, bbSpeed);
+                scene.enableBullet(bullet, tempSpeed);
             } else {
-                bullet.bullet.setSpeed(bbSpeed);
+                bullet.bullet.setSpeed(tempSpeed);
             }
-            
         }
     }
 }

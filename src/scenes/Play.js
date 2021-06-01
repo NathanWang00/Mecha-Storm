@@ -102,6 +102,10 @@ class Play extends Phaser.Scene {
 
         // hitbox
         this.hitbox = this.physics.add.sprite(520, 650, 'hitbox');
+        this.hitbox.body.setCircle(4);
+        this.hitbox.setVisible(false);
+        this.hitbox.x = this.player.x;
+        this.hitbox.y = this.player.y;
 
         // keyboard controls
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -233,10 +237,7 @@ class Play extends Phaser.Scene {
 
         this.healthOrigins = [];
         for (let i = 0; i < 3; i++) {
-
             this.healthOrigins.push(this.livesArray[i].x);
-            console.log(this.healthOrigins[i]);
-
         }
 
         // ammo counter
@@ -500,6 +501,7 @@ class Play extends Phaser.Scene {
                 this.focus = focusModifier;
                 this.gun.moveTo.speed = gunFocusSpeed;
                 this.sword.moveTo.speed = 1000;
+                this.hitbox.setVisible(true);
             }
             if (Phaser.Input.Keyboard.JustUp(this.focusKey)) {
                 this.focus = 1;
@@ -507,6 +509,7 @@ class Play extends Phaser.Scene {
                 this.gun.angle = 0;
                 this.sword.moveTo.speed = 1000;
                 this.crosshair.alpha = 0;
+                this.hitbox.setVisible(false);
             }
         }
 
@@ -610,6 +613,8 @@ class Play extends Phaser.Scene {
         // hitbox
         this.hitbox.x = this.player.x;
         this.hitbox.y = this.player.y;
+        this.hitbox.body.setVelocityX(this.player.body.velocity.x);
+        this.hitbox.body.setVelocityY(this.player.body.velocity.y);
 
         // gun and sword follow player
         this.gun.targetX = this.player.x - 40;
@@ -668,7 +673,7 @@ class Play extends Phaser.Scene {
                 this.spawn = this.time.delayedCall(8000, () => {
                     this.regularGroup.spawn(720, -75, this, regularSpeed, -4, 0, 0, 3, 1);
                 }, null, this);
-                delay = 12000;
+                delay = 14000;
             break;
 
             case 4 :
@@ -720,31 +725,31 @@ class Play extends Phaser.Scene {
             //#endregion tracking scouts
 
             case 9 :
-                this.heavyGroup.spawn(540, -100, this, heavySpeed, -1.25, 0, 0, 6, 1);
-                this.spawn = this.time.delayedCall(500, () => {//I'm sorry for whoever has to look at this
+                this.heavyGroup.spawn(540, -100, this, heavySpeed, -1.4, 0, 0, 6, 1);
+                this.spawn = this.time.delayedCall(2000, () => {//I'm sorry for whoever has to look at this
                     this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 1, 0, 3);
                 }, null, this);
-                this.spawn = this.time.delayedCall(800, () => {
+                this.spawn = this.time.delayedCall(2300, () => {
                     this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 0, 1, 3);
                 }, null, this);
-                this.spawn = this.time.delayedCall(1100, () => {
+                this.spawn = this.time.delayedCall(2600, () => {
                     this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 1, 0, 3);
                 }, null, this);
-                this.spawn = this.time.delayedCall(2800, () => {
+                this.spawn = this.time.delayedCall(6100, () => {
                     this.scoutGroup.spawn(780, -50, this, scoutSpeed + 200, 20, -10, 4.5, 1, 0, 3);
                 }, null, this);
-                this.spawn = this.time.delayedCall(3100, () => {
+                this.spawn = this.time.delayedCall(6400, () => {
                     this.scoutGroup.spawn(780, -50, this, scoutSpeed + 200, 20, -10, 4.5, 0, 1, 3);
                 }, null, this);
-                this.spawn = this.time.delayedCall(3400, () => {
+                this.spawn = this.time.delayedCall(6700, () => {
                     this.scoutGroup.spawn(780, -50, this, scoutSpeed + 200, 20, -10, 4.5, 1, 0, 3);
                 }, null, this);
-                delay = 5000;
+                delay = 16000;
             break;
 
             case 10 :
                 //this.scoutGroup.spawn(320, -50, this, scoutSpeed, 10, 0, -1, 1, 0.5);
-                delay = 1000;
+                delay = 0;
                 this.spawnTrack = startTrack-1;
             break;
 
@@ -767,9 +772,9 @@ class Play extends Phaser.Scene {
 
     spawnBasic(x, y, scene, angle) {
         if (angle == null) {
-            this.basicBulletGroup.shootBullet(x, y, scene, this.angToPlayer(x, y));
+            this.basicBulletGroup.shootBullet(x, y, scene, this.angToPlayer(x, y), 1);
         } else {
-            this.basicBulletGroup.shootBullet(x, y, scene, angle);
+            this.basicBulletGroup.shootBullet(x, y, scene, angle, 1);
         }
     }
 
@@ -791,6 +796,19 @@ class Play extends Phaser.Scene {
                 this.basicBulletGroup.shootBullet(x, y, scene, angle + index * 360 / number);
             }
         }
+    }
+
+    spawnHeavy(x, y, scene, angle) {
+        if (angle == null) {
+            this.basicBulletGroup.shootBullet(x, y, scene, this.angToPlayer(x, y), 2);
+        } else {
+            this.basicBulletGroup.shootBullet(x, y, scene, angle, 2);
+        }
+    }
+
+    spawnHeavyKids(obj, scene) {
+        this.basicBulletGroup.shootBullet(obj.x, obj.y, scene, obj.angle + 90, 3);
+        this.basicBulletGroup.shootBullet(obj.x, obj.y, scene, obj.angle - 90, 3);
     }
 
     spawnPickup(x, y, power, ammo) {

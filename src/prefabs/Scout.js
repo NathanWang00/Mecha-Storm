@@ -124,13 +124,13 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
                 this.scene.scoreText.text = this.scene.score;
                 this.scene.scoreTextShadow.text = this.scene.score;
 
+                this.scene.spawnPickup(this.x, this.y, this.power, this.bulletDrop);
+
                 if (this.pattern == 1) {
                     this.scene.spawnCircle(this.x, this.y, this.scene, 6, null);
                 } else {
                     this.scene.spawnCircle(this.x, this.y, this.scene, 8, null);
                 }
-                
-                this.scene.spawnPickup(this.x, this.y, this.power, this.bulletDrop);
                 this.death();
                 this.scene.botHurtSfx.play();
             }

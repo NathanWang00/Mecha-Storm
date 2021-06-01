@@ -47,13 +47,22 @@ class Heavy extends Phaser.Physics.Arcade.Sprite {
                     this.bullet.setSpeed(this.bullet.speed + this.accel * delta / 60);
                 } else {
                     this.bullet.setSpeed(0);
-                    this.phase = 2;
+                    this.phase = 1;
                     this.accel = 5;
                     this.shootDelay = 0;
-                    /*this.phaseSwitch = this.scene.time.delayedCall(4000, () => {
+                    this.phaseSwitch = this.scene.time.delayedCall(7500, () => {
                         this.phase = 2;
                         this.accel = 10;
-                    }, null, this.scene);*/
+                    }, null, this.scene);
+                }
+            }
+
+            if (this.phase == 1) {
+                if (this.shootDelay > 0) {
+                    this.shootDelay -= delta / 60;
+                } else {
+                    this.shootDelay = heavyShootDelay;
+                    this.scene.spawnHeavy(this.x, this.y, this.scene);
                 }
             }
 

@@ -58,6 +58,7 @@ let regularShootDelay = 25;
 let heavyHealth = 1750;
 let heavySpeed = 95;
 let heavyPoints = 500;
+let heavyShootDelay = 50;
 
 let bbSpeed = 400;
 let bbMin = 175;
@@ -76,7 +77,7 @@ let pTracerSpeed = 3500;
 let pTracerDamage = 500;
 
 let debug = true;
-let startTrack = 1;
+let startTrack = 8;
 
 /* 
 
