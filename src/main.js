@@ -43,6 +43,7 @@ let powerIncrease = 0.1;
 let basePowerDecrease = 0.001;
 let powerLoss = 0.0001;
 let maxPowerLoss = 0.02;
+let basePowerSpeed = -100;
 
 let scoutHealth = 50;
 let scoutSpeed = 200;

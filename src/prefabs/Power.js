@@ -11,7 +11,7 @@ class Power extends Phaser.Physics.Arcade.Sprite {
     spawn(x, y) {
         this.start();
         this.body.reset(x, y);
-        this.setVelocityY(-100);
+        this.setVelocityY(this.scene.powerSpeed);
         this.body.setMaxSpeed(250);
         this.depth = -1;
     }

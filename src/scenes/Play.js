@@ -64,6 +64,10 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+        //logic
+        this.gameover = false;
+        this.immortal = false;
+
         //Background Scenery
         this.cameras.main.setBackgroundColor('#FFFFFF');
         this.sceneBackground = this.add.image(540, 360, 'sceneBackground');
@@ -142,6 +146,7 @@ class Play extends Phaser.Scene {
         this.focus = 1;
 
         this.debugPower = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
+        this.debugInvincible = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.I);
 
         // Enemy groups
         this.scoutGroup = new ScoutGroup(this);
@@ -153,6 +158,7 @@ class Play extends Phaser.Scene {
         // Pickups
         this.ammoGroup = new AmmoGroup(this);
         this.powerGroup = new PowerGroup(this);
+        this.powerSpeed = basePowerSpeed;
 
         // Sword pool
         this.swordGroup = new SwordGroup(this);
@@ -634,9 +640,16 @@ class Play extends Phaser.Scene {
             this.powerProgress.y = this.endCap.y;
         } 
 
-        //debug power
+        //debug
         if (Phaser.Input.Keyboard.JustDown(this.debugPower) && debug) {
             this.power = 1;
+        }
+        if (Phaser.Input.Keyboard.JustDown(this.debugInvincible)) {
+            if (this.immortal) {
+                this.immortal = false;
+            } else {
+                this.immortal = true;
+            }
         }
 
         // hitbox
@@ -652,6 +665,10 @@ class Play extends Phaser.Scene {
         this.sword.targetX = this.player.x;
         this.sword.targetY = this.player.y - 75;
         this.sword.moveTo.moveTo(this.sword.targetX, this.sword.targetY);
+
+        if (this.gameOver && Phaser.Input.Keyboard.JustDown(this.powerKey)) {
+            this.reset();
+        }
     }
 
     enableBullet(obj, moveSpeed) {
@@ -674,151 +691,153 @@ class Play extends Phaser.Scene {
         if (wave != null) {
             tempTrack = wave;
         }
-        switch(tempTrack) {
-            case 0 :
+        if (!this.gameover) {
+            switch(tempTrack) {
+                case 0 :
+                    break;
+                    
+                case 1 : 
+                    //x, y, scene, speed, accel, ang, angAccel, power(#), ammo(%), bulletOption(0-2)
+                    //180-900, 1/4 = 360, 1/2 = 540, 3/4 = 720
+                    this.scoutGroup.spawn(250, -50, this, scoutSpeed, 20, -20, -2.5, 1, 0, 1);
+                    if (wave == null) {
+                        this.spawn = this.time.delayedCall(300, this.spawnWave, [1], this);
+                        this.spawn = this.time.delayedCall(600, this.spawnWave, [1], this);
+                        this.spawn = this.time.delayedCall(900, this.spawnWave, [1], this);
+                        this.spawn = this.time.delayedCall(1200, this.spawnWave, [1], this);
+                    }
+                    delay = 3200;
                 break;
-                
-            case 1 : 
-                //x, y, scene, speed, accel, ang, angAccel, power(#), ammo(%), bulletOption(0-2)
-                //180-900, 1/4 = 360, 1/2 = 540, 3/4 = 720
-                this.scoutGroup.spawn(250, -50, this, scoutSpeed, 20, -20, -2.5, 1, 0, 1);
-                if (wave == null) {
-                    this.spawn = this.time.delayedCall(300, this.spawnWave, [1], this);
-                    this.spawn = this.time.delayedCall(600, this.spawnWave, [1], this);
-                    this.spawn = this.time.delayedCall(900, this.spawnWave, [1], this);
-                    this.spawn = this.time.delayedCall(1200, this.spawnWave, [1], this);
-                }
-                delay = 3200;
-            break;
 
-            case 2 :
-                //x, y, scene, speed, accel, ang, angAccel, power(#), ammo(%), bulletOption(0-2)
-                this.scoutGroup.spawn(830, -50, this, scoutSpeed, 20, 20, 2.5, 1, 0, 1);
-                if (wave == null) {
-                    this.spawn = this.time.delayedCall(300, this.spawnWave, [2], this);
-                    this.spawn = this.time.delayedCall(600, this.spawnWave, [2], this);
-                    this.spawn = this.time.delayedCall(900, this.spawnWave, [2], this);
-                    this.spawn = this.time.delayedCall(1200, this.spawnWave, [2], this);
-                }
-                delay = 3200;
-            break;
+                case 2 :
+                    //x, y, scene, speed, accel, ang, angAccel, power(#), ammo(%), bulletOption(0-2)
+                    this.scoutGroup.spawn(830, -50, this, scoutSpeed, 20, 20, 2.5, 1, 0, 1);
+                    if (wave == null) {
+                        this.spawn = this.time.delayedCall(300, this.spawnWave, [2], this);
+                        this.spawn = this.time.delayedCall(600, this.spawnWave, [2], this);
+                        this.spawn = this.time.delayedCall(900, this.spawnWave, [2], this);
+                        this.spawn = this.time.delayedCall(1200, this.spawnWave, [2], this);
+                    }
+                    delay = 3200;
+                break;
 
-            case 3 :
-                this.regularGroup.spawn(540, -75, this, regularSpeed, -4, 0, 0, 3, 1, 1);
-                this.spawn = this.time.delayedCall(4000, () => {
-                    this.regularGroup.spawn(360, -75, this, regularSpeed, -4, 0, 0, 3, 1, 1);
-                }, null, this);
-                this.spawn = this.time.delayedCall(8000, () => {
-                    this.regularGroup.spawn(720, -75, this, regularSpeed, -4, 0, 0, 3, 1, 1);
-                }, null, this);
-                delay = 13000;
-            break;
+                case 3 :
+                    this.regularGroup.spawn(540, -75, this, regularSpeed, -4, 0, 0, 3, 1, 1);
+                    this.spawn = this.time.delayedCall(4000, () => {
+                        this.regularGroup.spawn(360, -75, this, regularSpeed, -4, 0, 0, 3, 1, 1);
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(8000, () => {
+                        this.regularGroup.spawn(720, -75, this, regularSpeed, -4, 0, 0, 3, 1, 1);
+                    }, null, this);
+                    delay = 13000;
+                break;
 
-            case 4 :
-                this.scoutGroup.spawn(300, -50, this, scoutSpeed, 30, 0, 0, 1, 0, 2);
-                if (wave == null) {
-                    this.spawn = this.time.delayedCall(300, this.spawnWave, [4], this);
-                    this.spawn = this.time.delayedCall(600, this.spawnWave, [4], this);
-                }
-                delay = 2000;  
-            break;
+                case 4 :
+                    this.scoutGroup.spawn(300, -50, this, scoutSpeed, 30, 0, 0, 1, 0, 2);
+                    if (wave == null) {
+                        this.spawn = this.time.delayedCall(300, this.spawnWave, [4], this);
+                        this.spawn = this.time.delayedCall(600, this.spawnWave, [4], this);
+                    }
+                    delay = 2000;  
+                break;
 
-            //#region tracking scouts 5-8
-            case 5 :
-                this.scoutGroup.spawn(780, -50, this, scoutSpeed, 30, 0, 0, 1, 0, 2);
-                if (wave == null) {
-                    this.spawn = this.time.delayedCall(300, this.spawnWave, [tempTrack], this);
-                    this.spawn = this.time.delayedCall(600, this.spawnWave, [tempTrack], this);
-                }
-                delay = 2000;  
-            break;
+                //#region tracking scouts 5-8
+                case 5 :
+                    this.scoutGroup.spawn(780, -50, this, scoutSpeed, 30, 0, 0, 1, 0, 2);
+                    if (wave == null) {
+                        this.spawn = this.time.delayedCall(300, this.spawnWave, [tempTrack], this);
+                        this.spawn = this.time.delayedCall(600, this.spawnWave, [tempTrack], this);
+                    }
+                    delay = 2000;  
+                break;
 
-            case 6 :
-                this.scoutGroup.spawn(420, -50, this, scoutSpeed, 30, 0, 0, 1, 0, 2);
-                if (wave == null) {
-                    this.spawn = this.time.delayedCall(300, this.spawnWave, [tempTrack], this);
-                    this.spawn = this.time.delayedCall(600, this.spawnWave, [tempTrack], this);
-                }
-                delay = 2000;  
-            break;
+                case 6 :
+                    this.scoutGroup.spawn(420, -50, this, scoutSpeed, 30, 0, 0, 1, 0, 2);
+                    if (wave == null) {
+                        this.spawn = this.time.delayedCall(300, this.spawnWave, [tempTrack], this);
+                        this.spawn = this.time.delayedCall(600, this.spawnWave, [tempTrack], this);
+                    }
+                    delay = 2000;  
+                break;
 
-            case 7 :
-                this.scoutGroup.spawn(660, -50, this, scoutSpeed, 30, 0, 0, 1, 0, 2);
-                if (wave == null) {
-                    this.spawn = this.time.delayedCall(300, this.spawnWave, [tempTrack], this);
-                    this.spawn = this.time.delayedCall(600, this.spawnWave, [tempTrack], this);
-                }
-                delay = 2000;  
-            break;
+                case 7 :
+                    this.scoutGroup.spawn(660, -50, this, scoutSpeed, 30, 0, 0, 1, 0, 2);
+                    if (wave == null) {
+                        this.spawn = this.time.delayedCall(300, this.spawnWave, [tempTrack], this);
+                        this.spawn = this.time.delayedCall(600, this.spawnWave, [tempTrack], this);
+                    }
+                    delay = 2000;  
+                break;
 
-            case 8 :
-                delay = 0;  
-            break;
+                case 8 :
+                    delay = 0;  
+                break;
 
-            //#endregion tracking scouts
+                //#endregion tracking scouts
 
-            case 9 :
-                this.heavyGroup.spawn(540, -100, this, heavySpeed, -1.4, 0, 0, 6, 1);
-                this.spawn = this.time.delayedCall(2000, () => {//I'm sorry for whoever has to look at this
-                    this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 1, 0, 3);
-                }, null, this);
-                this.spawn = this.time.delayedCall(2300, () => {
-                    this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 0, 1, 3);
-                }, null, this);
-                this.spawn = this.time.delayedCall(2600, () => {
-                    this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 1, 0, 3);
-                }, null, this);
-                this.spawn = this.time.delayedCall(6100, () => {
-                    this.scoutGroup.spawn(780, -50, this, scoutSpeed + 200, 20, -10, 4.5, 1, 0, 3);
-                }, null, this);
-                this.spawn = this.time.delayedCall(6400, () => {
-                    this.scoutGroup.spawn(780, -50, this, scoutSpeed + 200, 20, -10, 4.5, 0, 1, 3);
-                }, null, this);
-                this.spawn = this.time.delayedCall(6700, () => {
-                    this.scoutGroup.spawn(780, -50, this, scoutSpeed + 200, 20, -10, 4.5, 1, 0, 3);
-                }, null, this);
-                this.spawn = this.time.delayedCall(10200, () => {
-                    this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 1, 0, 3);
-                }, null, this);
-                this.spawn = this.time.delayedCall(10500, () => {
-                    this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 0, 1, 3);
-                }, null, this);
-                this.spawn = this.time.delayedCall(10800, () => {
-                    this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 1, 0, 3);
-                }, null, this);
-                delay = 14000;
-            break;
+                case 9 :
+                    this.heavyGroup.spawn(540, -100, this, heavySpeed, -1.4, 0, 0, 6, 1);
+                    this.spawn = this.time.delayedCall(2000, () => {//I'm sorry for whoever has to look at this
+                        this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 1, 0, 3);
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(2300, () => {
+                        this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 0, 1, 3);
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(2600, () => {
+                        this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 1, 0, 3);
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(6100, () => {
+                        this.scoutGroup.spawn(780, -50, this, scoutSpeed + 200, 20, -10, 4.5, 1, 0, 3);
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(6400, () => {
+                        this.scoutGroup.spawn(780, -50, this, scoutSpeed + 200, 20, -10, 4.5, 0, 1, 3);
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(6700, () => {
+                        this.scoutGroup.spawn(780, -50, this, scoutSpeed + 200, 20, -10, 4.5, 1, 0, 3);
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(10200, () => {
+                        this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 1, 0, 3);
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(10500, () => {
+                        this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 0, 1, 3);
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(10800, () => {
+                        this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 1, 0, 3);
+                    }, null, this);
+                    delay = 14000;
+                break;
 
-            case 10 :
-                this.scoutGroup.spawn(150, 0, this, scoutSpeed, 5, -30, 0, 1, 0, 2);
-                this.spawn = this.time.delayedCall(700, () => {
-                    this.scoutGroup.spawn(950, 0, this, scoutSpeed, 5, 30, 0, 0, 1, 2);
-                }, null, this);
-                this.spawn = this.time.delayedCall(1400, () => {
-                    this.scoutGroup.spawn(820, -20, this, scoutSpeed, 5, 0, 0, 0, 1, 2);
-                }, null, this);
-                this.spawn = this.time.delayedCall(1700, () => {
-                    this.scoutGroup.spawn(490, -50, this, scoutSpeed, 5, 0, 0, 0, 1, 2);
-                }, null, this);
-                delay = 4000;
-            break;
+                case 10 :
+                    this.scoutGroup.spawn(150, 0, this, scoutSpeed, 5, -30, 0, 1, 0, 2);
+                    this.spawn = this.time.delayedCall(700, () => {
+                        this.scoutGroup.spawn(950, 0, this, scoutSpeed, 5, 30, 0, 0, 1, 2);
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(1400, () => {
+                        this.scoutGroup.spawn(820, -20, this, scoutSpeed, 5, 0, 0, 0, 1, 2);
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(1700, () => {
+                        this.scoutGroup.spawn(490, -50, this, scoutSpeed, 5, 0, 0, 0, 1, 2);
+                    }, null, this);
+                    delay = 4000;
+                break;
 
-            case 11 :
-                this.regularGroup.spawn(350, -75, this, regularSpeed, -6, 0, 0, 3, 1, 2);
-                this.spawn = this.time.delayedCall(4360, () => {
-                    this.regularGroup.spawn(730, -75, this, regularSpeed, -6, 0, 0, 3, 1, 2);
-                }, null, this);
-                delay = 20000;
-            break;
+                case 11 :
+                    this.regularGroup.spawn(350, -75, this, regularSpeed, -6, 0, 0, 3, 1, 2);
+                    this.spawn = this.time.delayedCall(4360, () => {
+                        this.regularGroup.spawn(730, -75, this, regularSpeed, -6, 0, 0, 3, 1, 2);
+                    }, null, this);
+                    delay = 20000;
+                break;
 
-            case 12 :
-                //this.scoutGroup.spawn(320, -50, this, scoutSpeed, 10, 0, -1, 1, 0.5);
-                delay = 0;
-                this.spawnTrack = startTrack-1;
-            break;
+                case 12 :
+                    //this.scoutGroup.spawn(320, -50, this, scoutSpeed, 10, 0, -1, 1, 0.5);
+                    delay = 0;
+                    this.spawnTrack = startTrack-1;
+                break;
 
-            default :
-                console.log("spawn error");
+                default :
+                    console.log("spawn error");
+            }
         }
         if (wave == null) {
             this.spawnTrack++;
@@ -934,14 +953,23 @@ class Play extends Phaser.Scene {
             this.player.body.setVelocityY(0);
 
             if (this.lives <= 0) {
-                //game over stuff
+                this.gameOver();
                 console.log("game over");
-                this.soundtrack.stop();
-                this.registry.destroy();
-                this.events.off();
-                this.scene.restart();   
+                  
                 //this.scene.start("menuScene");  
             } else {
+                //power loss
+                var powerDrop = 2;
+                if (this.power > 0.4) {
+                    powerDrop = Phaser.Math.RoundAwayFromZero(((this.power/2) * 10))
+                    this.power *= 0.5;
+                } else {
+                    this.power = 0;
+                }
+                this.powerSpeed = -400;
+                this.spawnPower(this.player.x, this.player.y-120, powerDrop, false);
+                this.powerSpeed = basePowerSpeed;
+
                 this.recover = this.time.delayedCall(450, () => {
                     this.actionable = true;
                     this.pingPong = 1;
@@ -956,7 +984,6 @@ class Play extends Phaser.Scene {
                 // damage tween
 
                 this.tweens.addCounter({
-
                     from: 0,
                     to: 10,
                     duration: 50,
@@ -964,28 +991,40 @@ class Play extends Phaser.Scene {
                     loop: 1,
                     yoyo: true,
                     onUpdate: tween => {
-    
                         this.healthValue = tween.getValue();
-
                         for (let i = 0; i < 3; i++) {
-                            
                             this.livesArray[i].x = this.healthOrigins[i] + this.healthValue;
                             this.damagedArray[i].x = this.healthOrigins[i] + this.healthValue;
-
                         }
-                                
                     }
-
                 }); 
-
             }
             this.playerHitSfx.play();
             this.noAmmoSfx.play();
-            this.livesArray[this.lives].destroy();
-            this.damagedArray[this.lives].alpha = 1;
-            this.lives--;
-            this.livesArray.pop;
+            if (!this.immortal) {
+                this.livesArray[this.lives].destroy();
+                this.damagedArray[this.lives].alpha = 1;
+                this.lives--;
+                this.livesArray.pop;
+            }
         }
+    }
+
+    gameOver() {
+        this.gameover = true;
+        this.soundtrack.stop();
+        this.hitbox.setActive(false);
+        this.hitbox.setVisible(false);
+        this.hitbox.body.enable = false;
+        this.crosshair.setVisible(false);
+        this.gun.setVisible(false);
+        this.sword.setVisible(false);
+    }
+
+    reset() {
+        this.registry.destroy();
+        this.events.off();
+        this.scene.restart();
     }
 
     closestGroup(group) {
