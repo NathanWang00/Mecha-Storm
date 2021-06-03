@@ -70,6 +70,10 @@ class Play extends Phaser.Scene {
         this.cloudScroll2 = this.add.tileSprite(180, 0, 0, 0, 'cloudScroll2').setOrigin(0,0);
         this.cloudScroll = this.add.tileSprite(180, 0, 0, 0, 'cloudScroll').setOrigin(0,0);
         this.towerScroll = this.add.tileSprite(180, 0, 0, 0, 'towerScroll').setOrigin(0,0);
+        this.sceneBackground.depth = -10;
+        this.cloudScroll.depth = -10;
+        this.cloudScroll2.depth = -10;
+        this.towerScroll.depth = -10;
 
         //Game Audio
         this.swordBeamFire = this.sound.add('swordBeamFire', {volume: 0.8});
@@ -132,6 +136,7 @@ class Play extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
         this.shootKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
         this.focusKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
+        this.altFocusKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.CTRL);
         this.gunKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
         this.powerKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.focus = 1;
@@ -446,7 +451,7 @@ class Play extends Phaser.Scene {
 
             // awful naming conventions...
             // shoot and tracking
-            if (this.focusKey.isDown) {
+            if (this.focusKey.isDown || this.altFocusKey.isDown) {
                 this.closestEnemy = null;
                 this.closestGroup(this.scoutGroup); //updates closestEnemy to the closest active enemy in the group
                 this.closestGroup(this.regularGroup);
@@ -521,13 +526,13 @@ class Play extends Phaser.Scene {
             }
 
             // gun focus
-            if (Phaser.Input.Keyboard.JustDown(this.focusKey)) {
+            if (Phaser.Input.Keyboard.JustDown(this.focusKey) || Phaser.Input.Keyboard.JustDown(this.altFocusKey)) {
                 this.focus = focusModifier;
                 this.gun.moveTo.speed = gunFocusSpeed;
                 this.sword.moveTo.speed = 1000;
                 this.hitbox.setVisible(true);
             }
-            if (Phaser.Input.Keyboard.JustUp(this.focusKey)) {
+            if (Phaser.Input.Keyboard.JustUp(this.focusKey) || Phaser.Input.Keyboard.JustUp(this.altFocusKey)) {
                 this.focus = 1;
                 this.gun.moveTo.speed = gunFollowSpeed;
                 this.gun.angle = 0;
@@ -670,10 +675,13 @@ class Play extends Phaser.Scene {
             tempTrack = wave;
         }
         switch(tempTrack) {
+            case 0 :
+                break;
+                
             case 1 : 
                 //x, y, scene, speed, accel, ang, angAccel, power(#), ammo(%), bulletOption(0-2)
                 //180-900, 1/4 = 360, 1/2 = 540, 3/4 = 720
-                this.scoutGroup.spawn(340, -50, this, scoutSpeed, 20, -20, -2.5, 1, 0, 1);
+                this.scoutGroup.spawn(250, -50, this, scoutSpeed, 20, -20, -2.5, 1, 0, 1);
                 if (wave == null) {
                     this.spawn = this.time.delayedCall(300, this.spawnWave, [1], this);
                     this.spawn = this.time.delayedCall(600, this.spawnWave, [1], this);
@@ -685,7 +693,7 @@ class Play extends Phaser.Scene {
 
             case 2 :
                 //x, y, scene, speed, accel, ang, angAccel, power(#), ammo(%), bulletOption(0-2)
-                this.scoutGroup.spawn(740, -50, this, scoutSpeed, 20, 20, 2.5, 1, 0, 1);
+                this.scoutGroup.spawn(830, -50, this, scoutSpeed, 20, 20, 2.5, 1, 0, 1);
                 if (wave == null) {
                     this.spawn = this.time.delayedCall(300, this.spawnWave, [2], this);
                     this.spawn = this.time.delayedCall(600, this.spawnWave, [2], this);
@@ -778,7 +786,7 @@ class Play extends Phaser.Scene {
                 this.spawn = this.time.delayedCall(10800, () => {
                     this.scoutGroup.spawn(300, -50, this, scoutSpeed + 200, 20, 10, -4.5, 1, 0, 3);
                 }, null, this);
-                delay = 16000;
+                delay = 14000;
             break;
 
             case 10 :

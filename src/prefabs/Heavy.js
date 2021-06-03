@@ -43,14 +43,14 @@ class Heavy extends Phaser.Physics.Arcade.Sprite {
         super.preUpdate(time, delta);
         if (this.bullet.enable) {
             if (this.phase == 0) {
-                if (this.bullet.speed > -this.accel * delta / 60) {
+                if (this.bullet.speed > 10 -this.accel * delta / 60) {
                     this.bullet.setSpeed(this.bullet.speed + this.accel * delta / 60);
                 } else {
                     this.bullet.setSpeed(0);
                     this.phase = 1;
                     this.accel = 5;
                     this.shootDelay = 0;
-                    this.phaseSwitch = this.scene.time.delayedCall(7500, () => {
+                    this.phaseSwitch = this.scene.time.delayedCall(8500, () => {
                         this.phase = 2;
                         this.accel = 10;
                     }, null, this.scene);
@@ -62,7 +62,25 @@ class Heavy extends Phaser.Physics.Arcade.Sprite {
                     this.shootDelay -= delta / 60;
                 } else {
                     this.shootDelay = heavyShootDelay;
-                    this.scene.spawnHeavy(this.x, this.y, this.scene);
+                    var shootOffsetY = this.y + 50;
+                    var angToPlayer = this.scene.angToPlayer(this.x, shootOffsetY);
+                    this.scene.spawnFast(this.x, shootOffsetY, this.scene, angToPlayer - 30);
+                    this.scene.spawnFast(this.x, shootOffsetY, this.scene, angToPlayer + 30);
+                    this.shoot = this.scene.time.delayedCall(250, () => {
+                        this.scene.spawnFast(this.x, shootOffsetY, this.scene, angToPlayer - 22);
+                        this.scene.spawnFast(this.x, shootOffsetY, this.scene, angToPlayer + 22);
+                    }, null, this.scene);
+                    this.shoot = this.scene.time.delayedCall(500, () => {
+                        this.scene.spawnFast(this.x, shootOffsetY, this.scene, angToPlayer - 14);
+                        this.scene.spawnFast(this.x, shootOffsetY, this.scene, angToPlayer + 14);
+                    }, null, this.scene);
+                    this.shoot = this.scene.time.delayedCall(750, () => {
+                        this.scene.spawnFast(this.x, shootOffsetY, this.scene, angToPlayer - 5);
+                        this.scene.spawnFast(this.x, shootOffsetY, this.scene, angToPlayer + 5);
+                    }, null, this.scene);
+                    this.shoot = this.scene.time.delayedCall(1000, () => {
+                        this.scene.spawnHeavy(this.x, shootOffsetY, this.scene);
+                    }, null, this.scene);
                 }
             }
 
@@ -122,7 +140,7 @@ class Heavy extends Phaser.Physics.Arcade.Sprite {
 
     death() {
         this.body.reset(0, 0);
-        //this.scene.time.removeEvent(this.shoot);
+        this.scene.time.removeEvent(this.shoot);
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;

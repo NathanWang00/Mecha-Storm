@@ -37,10 +37,6 @@ class Regular extends Phaser.Physics.Arcade.Sprite {
         this.phase = 0;
         this.shootDelay = regularShootDelay;
 
-        if (pattern == 2) {
-            this.trackPlayer = this.scene.angToPlayer(this.x, this.y + 30);
-        }
-
         /*this.shoot = this.scene.time.delayedCall(1000, () => {
             this.scene.spawnFast(this.x, this.y, this.scene);
             //this.scene.spawnFast(this.x, this.y, this.scene, this.scene.angToPlayer(this.x, this.y) + 30);
@@ -59,6 +55,7 @@ class Regular extends Phaser.Physics.Arcade.Sprite {
                     this.phase = 1;
                     this.accel = 0;
                     this.shootDelay = 0;
+                    this.trackPlayer = this.scene.angToPlayer(this.x, this.y + 30);
                     this.phaseSwitch = this.scene.time.delayedCall(4000, () => {
                         this.phase = 2;
                         this.accel = 10;
@@ -87,14 +84,26 @@ class Regular extends Phaser.Physics.Arcade.Sprite {
                     var angToPlayer = this.scene.angToPlayer(this.x, this.y + 30);
                     var angleDifference = angToPlayer - this.trackPlayer;
 
+                    console.log(angToPlayer);
+
                     if (angleDifference < 0) {
                         angleDifference *= -1;
                     }
                     if (angleDifference > 1) {
-                        if (angToPlayer > this.trackPlayer) {
-                            this.trackPlayer += 0.15;
+                        var trackInc = 0.9;
+                        if (angToPlayer > 90 && this.trackPlayer < -90) {
+                            this.trackPlayer -= trackInc;
+                        } else if (this.trackPlayer > 90 && angToPlayer < -90) {
+                            this.trackPlayer += trackInc;
+                        } else if (angToPlayer > this.trackPlayer) {
+                            this.trackPlayer += trackInc;
                         } else {
-                            this.trackPlayer -= 0.15;
+                            this.trackPlayer -= trackInc;
+                        }
+                        if (this.trackPlayer < -180) {
+                            this.trackPlayer += 360;
+                        } else if (this.trackPlayer > 180) {
+                            this.trackPlayer -= 360;
                         }
                     }
 

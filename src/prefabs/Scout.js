@@ -35,7 +35,7 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
         this.angleTurn = 1;
 
         if (pattern == 1) {//basic shooters
-            this.shoot = this.scene.time.delayedCall(425, () => {
+            this.shoot = this.scene.time.delayedCall(400, () => {
                 this.scene.spawnFast(this.x, this.y, this.scene);
                 //this.scene.spawnFast(this.x, this.y, this.scene, this.scene.angToPlayer(this.x, this.y) + 30);
                 //this.scene.spawnFast(this.x, this.y, this.scene, this.scene.angToPlayer(this.x, this.y) - 30);
@@ -136,7 +136,7 @@ class Scout extends Phaser.Physics.Arcade.Sprite {
 
                 if (this.pattern == 1) {
                     this.scene.spawnCircle(this.x, this.y, this.scene, 6, null);
-                } else {
+                } else if (this.pattern == 2) {
                     this.scene.spawnCircle(this.x, this.y, this.scene, 8, null);
                 }
                 this.death();
