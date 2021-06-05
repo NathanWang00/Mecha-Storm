@@ -12,6 +12,7 @@ class Play extends Phaser.Scene {
         this.load.image('scout', './assets/Scout.png');
         this.load.image('regular', './assets/Regular.png');
         this.load.image('heavy', './assets/Heavy.png');
+        this.load.image('cyborg', './assets/Cyborg.png');
 
         this.load.image('gun', './assets/GunIdle.png');
         this.load.image('gunUpgrade', './assets/GunIdleUpgraded.png');
@@ -25,6 +26,7 @@ class Play extends Phaser.Scene {
         this.load.image('tracer', './assets/Tracer.png');
         this.load.image('basicBullet', './assets/EnemyProjectile1.png');
         this.load.image('fastBullet', './assets/EnemyProjectile2.png')
+        this.load.image('eggBullet', './assets/EnemyProjectile3.png');
 
         this.load.plugin('rexbulletplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexbulletplugin.min.js', true);
         this.load.plugin('rexmovetoplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexmovetoplugin.min.js', true);//for move to
@@ -152,8 +154,10 @@ class Play extends Phaser.Scene {
         this.scoutGroup = new ScoutGroup(this);
         this.regularGroup = new RegularGroup(this);
         this.heavyGroup = new HeavyGroup(this);
+        this.cyborgGroup = new CyborgGroup(this);
         this.basicBulletGroup = new BasicBulletGroup(this);
         this.fastBulletGroup = new FastBulletGroup(this);
+        this.eggBulletGroup = new EggBulletGroup(this);
 
         // Pickups
         this.ammoGroup = new AmmoGroup(this);
@@ -373,11 +377,28 @@ class Play extends Phaser.Scene {
                 heavy.hit(tempDamage);
             }
         });
+        this.physics.add.overlap(this.cyborgGroup, this.swordGroup, function (cyborg, swordBeam)
+        {
+            var tempDamage = swordBeam.getDamage();
+            if(swordBeam.active && swordBeam.hit(cyborg)) {
+                cyborg.hit(tempDamage);
+            }
+        });
+        this.physics.add.overlap(this.cyborgGroup, this.tracerGroup, function (cyborg, tracer)
+        {
+            var tempDamage = tracer.getDamage();
+            if(tracer.active && tracer.hit(cyborg)) {
+                cyborg.hit(tempDamage);
+            }
+        });
+
         this.physics.add.overlap(this.scoutGroup, this.hitbox, this.playerHurt, null, this);
         this.physics.add.overlap(this.regularGroup, this.hitbox, this.playerHurt, null, this);
         this.physics.add.overlap(this.heavyGroup, this.hitbox, this.playerHurt, null, this);
+        this.physics.add.overlap(this.cyborgGroup, this.hitbox, this.playerHurt, null, this);
         this.physics.add.overlap(this.hitbox, this.basicBulletGroup, this.playerHurt, null, this);
         this.physics.add.overlap(this.hitbox, this.fastBulletGroup, this.playerHurt, null, this);
+        this.physics.add.overlap(this.hitbox, this.eggBulletGroup, this.playerHurt, null, this);
 
         this.physics.add.overlap(this.player, this.ammoGroup, function (player, ammoGroup)
         {
@@ -462,6 +483,7 @@ class Play extends Phaser.Scene {
                 this.closestGroup(this.scoutGroup); //updates closestEnemy to the closest active enemy in the group
                 this.closestGroup(this.regularGroup);
                 this.closestGroup(this.heavyGroup);
+                this.closestGroup(this.cyborgGroup);
                 if (this.closestEnemy != null) {
                     var closeAngle = Phaser.Math.Angle.BetweenPoints({x: this.gun.x, y: this.gun.y}, {x: this.closestEnemy.x, y: this.closestEnemy.y});
                     closeAngle = Phaser.Math.RadToDeg(closeAngle);
@@ -691,7 +713,7 @@ class Play extends Phaser.Scene {
         if (wave != null) {
             tempTrack = wave;
         }
-        if (!this.gameover) {
+        if (!this.gameover && this.spawnTrack != -1) {
             switch(tempTrack) {
                 case 0 :
                     break;
@@ -830,16 +852,16 @@ class Play extends Phaser.Scene {
                 break;
 
                 case 12 :
-                    //this.scoutGroup.spawn(320, -50, this, scoutSpeed, 10, 0, -1, 1, 0.5);
-                    delay = 0;
-                    this.spawnTrack = startTrack-1;
+                    this.cyborgGroup.spawn(540, -100, this);
+                    //delay = 0;
+                    this.spawnTrack = -2;
                 break;
 
                 default :
                     console.log("spawn error");
             }
         }
-        if (wave == null) {
+        if (wave == null && this.spawnTrack != -1) {
             this.spawnTrack++;
 
             // repeat the wave for testing
@@ -868,6 +890,15 @@ class Play extends Phaser.Scene {
             this.fastBulletGroup.shootBullet(x, y, scene, angle);
         }
         this.efSfx3.play();
+    }
+
+    spawnEgg(x, y, scene, angle) {
+        if (angle == null) {
+            this.eggBulletGroup.shootBullet(x, y, scene, this.angToPlayer(x, y), 1);
+        } else {
+            this.eggBulletGroup.shootBullet(x, y, scene, angle, 1);
+        }
+        this.efSfx2.play();
     }
 
     spawnCircle(x, y, scene, number, angle) {
