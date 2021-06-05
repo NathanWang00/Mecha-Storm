@@ -20,6 +20,12 @@ class EggBullet extends Phaser.Physics.Arcade.Sprite {
         } else {
             this.pattern = pattern;
         }
+        if (pattern == 1) {
+            this.timer = this.scene.time.delayedCall(1000, () => {
+                this.scene.spawnCircle(this.x, this.y, this.scene, 8);
+                this.stop();
+            }, null, this.scene);
+        }
     }
 
     preUpdate(time, delta) {
