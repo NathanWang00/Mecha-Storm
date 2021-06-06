@@ -55,18 +55,24 @@ let regularSpeed = 150;
 let regularPoints = 125;
 let regularMinSpeed = 50;
 let regularShootDelay = 25;
-let regulatShootDelay2 = 3.25;
+let regulatShootDelay2 = 5;
 
 let heavyHealth = 1500;
 let heavySpeed = 95;
 let heavyPoints = 500;
 let heavyShootDelay = 50;
 
-let cyborgHealth = 5000;
-let cyborgSpeed = 400;
-let cyborgAccel = 15;
+let cyborgHealth = 3000;
+let cyborgHealth2 = 1750;
+let cyborgSpeed = 200;
+let cyborgSpeed2 = 800;
+let cyborgAccel = -5;
+let cyborgAccel2 = 60;
 let cyborgPoints = 5000;
-let cyborgShootDelay = 20;
+let cyborgShootDelay = 25;
+let cyborgShootDelay2 = 10;
+let cyborgShootDelay3 = 1.5;
+let cyborgShootDelay4 = 4;
 
 let bbSpeed = 400;
 let bbMin = 175;
@@ -77,7 +83,7 @@ let fbMin = 50;
 let fbAccel = 100;
 
 let ebSpeed = 400;
-let ebMin = 200;
+let ebMin = 250;
 let ebAccel = -40;
 
 //power upgrades
@@ -89,7 +95,7 @@ let pTracerSpeed = 3500;
 let pTracerDamage = 350;
 
 let debug = true;
-let startTrack = 12;
+let startTrack = 1;
 
 /* 
 

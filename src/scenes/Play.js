@@ -68,6 +68,7 @@ class Play extends Phaser.Scene {
     create() {
         //logic
         this.gameover = false;
+        this.victory = false;
         this.immortal = false;
 
         //Background Scenery
@@ -387,7 +388,7 @@ class Play extends Phaser.Scene {
         });
         this.physics.add.overlap(this.cyborgGroup, this.tracerGroup, function (cyborg, tracer)
         {
-            var tempDamage = tracer.getDamage();
+            var tempDamage = tracer.getDamage() / 2;
             if(tracer.active && tracer.hit(cyborg)) {
                 cyborg.hit(tempDamage);
             }
@@ -846,10 +847,25 @@ class Play extends Phaser.Scene {
 
                 case 11 :
                     this.regularGroup.spawn(350, -75, this, regularSpeed, -6, 0, 0, 3, 1, 2);
-                    this.spawn = this.time.delayedCall(4360, () => {
+                    this.spawn = this.time.delayedCall(3000, () => {
                         this.regularGroup.spawn(730, -75, this, regularSpeed, -6, 0, 0, 3, 1, 2);
                     }, null, this);
-                    delay = 20000;
+                    this.spawn = this.time.delayedCall(5500, () => {
+                        this.spawnEgg(400, -100, this, 90, 1)
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(6600, () => {
+                        this.spawnEgg(500, -200, this, 90, 1)
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(6250, () => {
+                        this.spawnEgg(640, -75, this, 90, 1)
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(7100, () => {
+                        this.spawnEgg(240, -240, this, 90, 1)
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(7600, () => {
+                        this.spawnEgg(820, -300, this, 90, 1)
+                    }, null, this);
+                    delay = 9000;
                 break;
 
                 case 12 :
@@ -871,6 +887,11 @@ class Play extends Phaser.Scene {
     }
 
     angToPlayer(x, y) {
+        if (y == null) {
+            var ang = Phaser.Math.Angle.BetweenPoints({x: x.x, y: x.y}, {x: this.player.x, y: this.player.y});
+            ang = Phaser.Math.RadToDeg(ang);
+            return ang;
+        }
         var ang = Phaser.Math.Angle.BetweenPoints({x: x, y: y}, {x: this.player.x, y: this.player.y});
         ang = Phaser.Math.RadToDeg(ang);
         return ang;
@@ -893,11 +914,11 @@ class Play extends Phaser.Scene {
         this.efSfx3.play();
     }
 
-    spawnEgg(x, y, scene, angle) {
+    spawnEgg(x, y, scene, angle, pattern) {
         if (angle == null) {
-            this.eggBulletGroup.shootBullet(x, y, scene, this.angToPlayer(x, y), 1);
+            this.eggBulletGroup.shootBullet(x, y, scene, this.angToPlayer(x, y), pattern);
         } else {
-            this.eggBulletGroup.shootBullet(x, y, scene, angle, 1);
+            this.eggBulletGroup.shootBullet(x, y, scene, angle, pattern);
         }
         this.efSfx2.play();
     }
@@ -905,11 +926,11 @@ class Play extends Phaser.Scene {
     spawnCircle(x, y, scene, number, angle) {
         if (angle == null) {
             for (let index = 0; index < number; index++) {
-                this.basicBulletGroup.shootBullet(x, y, scene, this.angToPlayer(x, y) + index * 360 / number);
+                this.basicBulletGroup.shootBullet(x, y, scene, this.angToPlayer(x, y) + index * 360 / number, 1);
             }
         } else {
             for (let index = 0; index < number; index++) {
-                this.basicBulletGroup.shootBullet(x, y, scene, angle + index * 360 / number);
+                this.basicBulletGroup.shootBullet(x, y, scene, angle + index * 360 / number, 1);
             }
         }
     }
@@ -1045,12 +1066,20 @@ class Play extends Phaser.Scene {
     gameOver() {
         this.gameover = true;
         this.soundtrack.stop();
-        this.hitbox.setActive(false);
-        this.hitbox.setVisible(false);
-        this.hitbox.body.enable = false;
-        this.crosshair.setVisible(false);
-        this.gun.setVisible(false);
-        this.sword.setVisible(false);
+        if (!this.victory) {
+            this.hitbox.setActive(false);
+            this.hitbox.setVisible(false);
+            this.hitbox.body.enable = false;
+            this.crosshair.setVisible(false);
+            this.gun.setVisible(false);
+            this.sword.setVisible(false);
+        }
+    }
+
+    win() {
+        this.victory = true;
+        this.gameOver();
+        // show victory screen and cool stuff!
     }
 
     reset() {

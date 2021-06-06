@@ -15,15 +15,23 @@ class EggBullet extends Phaser.Physics.Arcade.Sprite {
         this.start();
         this.body.reset(x, y);
         this.accel = ebAccel;
+        this.minSpeed = ebMin;
         if (pattern == null) {
             this.pattern = 1;
         } else {
             this.pattern = pattern;
         }
         if (pattern == 1) {
-            this.timer = this.scene.time.delayedCall(1000, () => {
-                this.scene.spawnCircle(this.x, this.y, this.scene, 8);
+            this.timer = this.scene.time.delayedCall(2000, () => {
+                this.scene.spawnCircle(this.x, this.y, this.scene, 12);
+                this.scene.efSfx1.play();
                 this.stop();
+            }, null, this.scene);
+        }
+        if (pattern == 2) {
+            this.timer = this.scene.time.delayedCall(500, () => {
+                this.angle = this.scene.angToPlayer(this);
+                this.speed = ebSpeed;
             }, null, this.scene);
         }
     }
@@ -32,10 +40,10 @@ class EggBullet extends Phaser.Physics.Arcade.Sprite {
         super.preUpdate(time, delta);
         if (this.bullet.enable) {
             if (this.accel < 0) {
-                if (this.bullet.speed + this.accel * delta / 60 > ebMin) {
+                if (this.bullet.speed + this.accel * delta / 60 > this.minSpeed) {
                     this.bullet.setSpeed(this.bullet.speed + this.accel * delta / 60);
                 } else if (this.accel < 0) {
-                    this.bullet.setSpeed(ebMin);
+                    this.bullet.setSpeed(this.minSpeed);
                 }
             } else {
                 this.bullet.setSpeed(this.bullet.speed + this.accel * delta / 60);

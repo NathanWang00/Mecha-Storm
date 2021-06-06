@@ -17,7 +17,7 @@ class CyborgGroup extends Phaser.Physics.Arcade.Group
         this.runChildUpdate = true;
         var cyborg = this.getFirstDead(false);
         if (cyborg) {
-            scene.enableMoveTo(cyborg, x, y, 0, false);
+            scene.enableMoveTo(cyborg, x, y, cyborgSpeed, false);
             cyborg.spawn(x, y);
         }
     }

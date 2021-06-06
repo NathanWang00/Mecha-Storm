@@ -84,8 +84,6 @@ class Regular extends Phaser.Physics.Arcade.Sprite {
                     var angToPlayer = this.scene.angToPlayer(this.x, this.y + 30);
                     var angleDifference = angToPlayer - this.trackPlayer;
 
-                    console.log(angToPlayer);
-
                     if (angleDifference < 0) {
                         angleDifference *= -1;
                     }
