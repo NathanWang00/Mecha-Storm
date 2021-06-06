@@ -145,6 +145,7 @@ class Play extends Phaser.Scene {
         this.altFocusKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.CTRL);
         this.gunKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
         this.powerKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.resetKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         this.focus = 1;
 
         this.debugPower = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
@@ -688,7 +689,7 @@ class Play extends Phaser.Scene {
         this.sword.targetY = this.player.y - 75;
         this.sword.moveTo.moveTo(this.sword.targetX, this.sword.targetY);
 
-        if (this.gameOver && Phaser.Input.Keyboard.JustDown(this.powerKey)) {
+        if ((this.gameover && Phaser.Input.Keyboard.JustDown(this.powerKey)) || Phaser.Input.Keyboard.JustDown(this.resetKey)) {
             this.reset();
         }
     }
@@ -1053,6 +1054,7 @@ class Play extends Phaser.Scene {
     }
 
     reset() {
+        this.soundtrack.stop();
         this.registry.destroy();
         this.events.off();
         this.scene.restart();
