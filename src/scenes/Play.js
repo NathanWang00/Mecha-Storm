@@ -63,6 +63,9 @@ class Play extends Phaser.Scene {
         this.load.audio('efSfx2', ['assets/EnemyFire02.wav']);
         this.load.audio('efSfx3', ['assets/EnemyFire03.wav']);
         this.load.audio('soundtrack', ['assets/soundtrack.wav']);
+        this.load.audio('victorySfx', ['assets/VictorySound.wav']);
+        this.load.audio('lossSfx', ['assets/LossSound.wav']);
+
     }
 
     create() {
@@ -94,7 +97,9 @@ class Play extends Phaser.Scene {
         this.efSfx1 = this.sound.add('efSfx1');
         this.efSfx2 = this.sound.add('efSfx2');
         this.efSfx3 = this.sound.add('efSfx3');
-
+        this.lossSfx = this.sound.add('lossSfx');
+        this.victorySfx = this.sound.add('victorySfx');
+        
         //Music
         this.soundtrack = this.sound.add('soundtrack');
         var musicConfig={
@@ -1066,6 +1071,16 @@ class Play extends Phaser.Scene {
     gameOver() {
         this.gameover = true;
         this.soundtrack.stop();
+        var lossMusicConfig={
+            mute: false,
+            volume: .15,
+            rate: 1,
+            detune: 0,
+            seek: 0,
+            loop: false,
+            delay: 0
+        }
+        this.lossSfx.play(lossMusicConfig);
         if (!this.victory) {
             this.hitbox.setActive(false);
             this.hitbox.setVisible(false);
@@ -1079,6 +1094,16 @@ class Play extends Phaser.Scene {
     win() {
         this.victory = true;
         this.gameOver();
+        var victoryMusicConfig={
+            mute: false,
+            volume: .15,
+            rate: 1,
+            detune: 0,
+            seek: 0,
+            loop: false,
+            delay: 0
+        }
+        this.victorySfx.play(victoryMusicConfig);
         // show victory screen and cool stuff!
     }
 
