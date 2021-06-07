@@ -1334,6 +1334,7 @@ class Play extends Phaser.Scene {
 
     reset() {
         this.soundtrack.stop();
+        this.lossSfx.stop();
         this.victorySfx.stop();
         this.registry.destroy();
         this.events.off();
