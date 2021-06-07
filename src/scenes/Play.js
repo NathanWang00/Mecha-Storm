@@ -51,6 +51,7 @@ class Play extends Phaser.Scene {
         this.load.image('swordIconUpgraded', './assets/SwordIconUpgraded.png');
         this.load.image('cloudScroll', './assets/CloudScroll.png');
         this.load.image('cloudScroll2', './assets/CloudScroll2.png');
+        this.load.image('towerTop', './assets/TowerTop.png');
 
         //SFX load
         this.load.audio('swordBeamFire', ['assets/placeholderSwordShot.wav']);
@@ -88,6 +89,14 @@ class Play extends Phaser.Scene {
         this.cloudScroll.depth = -10;
         this.cloudScroll2.depth = -10;
         this.towerScroll.depth = -10;
+
+        this.towerTop = this.add.image(180, -2106, 'towerTop').setOrigin(0, 0);
+        this.towerTop.setVisible(false);
+        this.universalScroll = 1;
+        this.towerTrack = 0;
+        this.bossStart = false;
+        this.bossWait = false;
+        this.towerTop.depth = -10;
 
         //Game Audio
         this.swordBeamFire = this.sound.add('swordBeamFire', {volume: 0.8});
@@ -430,10 +439,49 @@ class Play extends Phaser.Scene {
         let tempSpeed = this.playerSpeed;
 
         //background scroll update
-        this.cloudScroll2.tilePositionY -= 1;
-        this.cloudScroll.tilePositionY -= 2;
-        this.towerScroll.tilePositionY -= 3;
+        this.cloudScroll2.tilePositionY -= 8 * delta / 60 * this.universalScroll;
+        this.cloudScroll.tilePositionY -= 16 * delta / 60 * this.universalScroll;
+        this.towerScroll.tilePositionY -= 24 * delta / 60 * this.universalScroll;
+        this.towerTrack += 24 * delta / 60 * this.universalScroll;
+        if (this.towerTrack > 2880) {
+            this.towerTrack -= 2880;
+            if (this.bossStart && this.towerScroll.visible) {
+                this.towerTop.y += this.towerTrack;
+                this.towerTop.setVisible(true);   
+            }
+        }
 
+        if (this.bossStart && this.towerTrack >= 720 && this.towerTop.visible) {
+            this.towerScroll.setVisible(false);
+        }
+
+        if (this.towerTop.visible) {
+            this.towerTop.y += 24 * delta / 60 * this.universalScroll;
+
+            if (this.universalScroll > 0) {
+                this.universalScroll -= 0.0055 * delta / 60;
+            } else {
+                this.universalScroll = 0;
+            }
+
+            if (this.universalScroll < 0.15 && this.bossWait) {
+                this.bossWait = false;
+                if (!this.continued) {
+                    this.cyborgGroup.spawn(540, -100, this);
+                } else {
+                    this.noBoss = true;
+                    this.actionable = false;
+                    this.damageable = false;
+                    this.player.alpha = 0;
+                    this.player.body.setVelocityX(0);
+                    this.player.body.setVelocityY(0);
+                    this.gameOver();
+                    this.scene.pause();
+                    this.scene.launch('pauseScene');
+                }
+            }
+        }
+        
         if (this.actionable) {
             // player movement
             if (this.cursors.up.isDown) {
@@ -857,30 +905,49 @@ class Play extends Phaser.Scene {
                     this.spawn = this.time.delayedCall(3000, () => {
                         this.regularGroup.spawn(730, -75, this, regularSpeed, -6, 0, 0, 3, 1, 2);
                     }, null, this);
-                    this.spawn = this.time.delayedCall(5500, () => {
+                    this.spawn = this.time.delayedCall(8500, () => {
                         this.spawnEgg(400, -100, this, 90, 1)
+                        this.bossStart = true;
                     }, null, this);
-                    this.spawn = this.time.delayedCall(6600, () => {
+                    this.spawn = this.time.delayedCall(9600, () => {
                         this.spawnEgg(500, -200, this, 90, 1)
                     }, null, this);
-                    this.spawn = this.time.delayedCall(6250, () => {
+                    this.spawn = this.time.delayedCall(10890, () => {
                         this.spawnEgg(640, -75, this, 90, 1)
                     }, null, this);
-                    this.spawn = this.time.delayedCall(7100, () => {
+                    this.spawn = this.time.delayedCall(11100, () => {
                         this.spawnEgg(240, -240, this, 90, 1)
                     }, null, this);
-                    this.spawn = this.time.delayedCall(7600, () => {
+                    this.spawn = this.time.delayedCall(12600, () => {
                         this.spawnEgg(820, -300, this, 90, 1)
                     }, null, this);
-                    delay = 9000;
+
+                    this.spawn = this.time.delayedCall(13000, () => {
+                        this.spawnEgg(440, -100, this, 90, 1)
+                        this.bossStart = true;
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(14600, () => {
+                        this.spawnEgg(520, -200, this, 90, 1)
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(15750, () => {
+                        this.spawnEgg(620, -75, this, 90, 1)
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(16100, () => {
+                        this.spawnEgg(260, -240, this, 90, 1)
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(17600, () => {
+                        this.spawnEgg(800, -300, this, 90, 1)
+                    }, null, this);
+                    this.bossWait = true;
+                    delay = 6000;
                 break;
 
                 case 12 :
                     if (!this.continued) {
-                        this.cyborgGroup.spawn(540, -100, this);
+                        //this.bossWait = true;
                     }
                     else {
-                        this.noBoss = true;
+                        /*this.noBoss = true;
                         this.actionable = false;
                         this.damageable = false;
                         this.player.alpha = 0;
@@ -888,7 +955,7 @@ class Play extends Phaser.Scene {
                         this.player.body.setVelocityY(0);
                         this.gameOver();
                         this.scene.pause();
-                        this.scene.launch('pauseScene');
+                        this.scene.launch('pauseScene');*/
                     }
                     this.spawnTrack = -2;
                 break;

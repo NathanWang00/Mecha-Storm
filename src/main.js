@@ -63,7 +63,7 @@ let heavyPoints = 500;
 let heavyShootDelay = 50;
 
 let cyborgHealth = 3000;
-let cyborgHealth2 = 1750;
+let cyborgHealth2 = 2250;
 let cyborgSpeed = 200;
 let cyborgSpeed2 = 800;
 let cyborgAccel = -5;
@@ -95,7 +95,7 @@ let pTracerSpeed = 3500;
 let pTracerDamage = 350;
 
 let debug = true;
-let startTrack = 12;
+let startTrack = 1;
 
 /* 
 
