@@ -1,6 +1,7 @@
 // Mecha Storm by Team Radicool Dragonfire Ninjas
 // Made for the AGPM and CMPM 120-1 classes, section E
 // By Liam Booher, Ashley Chapp, Ethan Tung, and Nathan Wang
+// DEBUG CONTROLS: PRESS I TO STOP LIFE LOSS AND P FOR FULL POWER
 
 
 let config = {
@@ -95,7 +96,7 @@ let pTracerSpeed = 3500;
 let pTracerDamage = 350;
 
 let debug = true;
-let startTrack = 11;
+let startTrack = 1;
 
 /* 
 
