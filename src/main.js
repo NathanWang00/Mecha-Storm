@@ -23,7 +23,7 @@ let config = {
         target: 60,
         forceSetTimeOut: true
     },*/
-    scene: [ Menu, Play ]
+    scene: [ Menu, Play, Pause ]
 }
 
 let game = new Phaser.Game(config);
@@ -55,7 +55,7 @@ let regularSpeed = 150;
 let regularPoints = 125;
 let regularMinSpeed = 50;
 let regularShootDelay = 25;
-let regulatShootDelay2 = 5;
+let regulatShootDelay2 = 4.5;
 
 let heavyHealth = 1500;
 let heavySpeed = 95;
@@ -63,7 +63,7 @@ let heavyPoints = 500;
 let heavyShootDelay = 50;
 
 let cyborgHealth = 3000;
-let cyborgHealth2 = 1750;
+let cyborgHealth2 = 2250;
 let cyborgSpeed = 200;
 let cyborgSpeed2 = 800;
 let cyborgAccel = -5;

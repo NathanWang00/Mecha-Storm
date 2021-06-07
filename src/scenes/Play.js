@@ -51,6 +51,7 @@ class Play extends Phaser.Scene {
         this.load.image('swordIconUpgraded', './assets/SwordIconUpgraded.png');
         this.load.image('cloudScroll', './assets/CloudScroll.png');
         this.load.image('cloudScroll2', './assets/CloudScroll2.png');
+        this.load.image('towerTop', './assets/TowerTop.png');
 
         //SFX load
         this.load.audio('swordBeamFire', ['assets/placeholderSwordShot.wav']);
@@ -75,6 +76,8 @@ class Play extends Phaser.Scene {
         this.gameover = false;
         this.victory = false;
         this.immortal = false;
+        this.continued = false;
+        this.noBoss = false;
 
         //Background Scenery
         this.cameras.main.setBackgroundColor('#FFFFFF');
@@ -86,6 +89,14 @@ class Play extends Phaser.Scene {
         this.cloudScroll.depth = -10;
         this.cloudScroll2.depth = -10;
         this.towerScroll.depth = -10;
+
+        this.towerTop = this.add.image(180, -2106, 'towerTop').setOrigin(0, 0);
+        this.towerTop.setVisible(false);
+        this.universalScroll = 1;
+        this.towerTrack = 0;
+        this.bossStart = false;
+        this.bossWait = false;
+        this.towerTop.depth = -10;
 
         //Game Audio
         this.swordBeamFire = this.sound.add('swordBeamFire', {volume: 0.8});
@@ -264,10 +275,8 @@ class Play extends Phaser.Scene {
         this.livesArray = [];
 
         for (let i = 0; i < 3; i++) {
-
             let life = this.add.sprite(47 + 43 * i, 78, 'health');
             this.livesArray.push(life);
-
         }
 
         this.damagedArray = [];
@@ -430,10 +439,49 @@ class Play extends Phaser.Scene {
         let tempSpeed = this.playerSpeed;
 
         //background scroll update
-        this.cloudScroll2.tilePositionY -= 1;
-        this.cloudScroll.tilePositionY -= 2;
-        this.towerScroll.tilePositionY -= 3;
+        this.cloudScroll2.tilePositionY -= 8 * delta / 60 * this.universalScroll;
+        this.cloudScroll.tilePositionY -= 16 * delta / 60 * this.universalScroll;
+        this.towerScroll.tilePositionY -= 24 * delta / 60 * this.universalScroll;
+        this.towerTrack += 24 * delta / 60 * this.universalScroll;
+        if (this.towerTrack > 2880) {
+            this.towerTrack -= 2880;
+            if (this.bossStart && this.towerScroll.visible) {
+                this.towerTop.y += this.towerTrack;
+                this.towerTop.setVisible(true);   
+            }
+        }
 
+        if (this.bossStart && this.towerTrack >= 720 && this.towerTop.visible) {
+            this.towerScroll.setVisible(false);
+        }
+
+        if (this.towerTop.visible) {
+            this.towerTop.y += 24 * delta / 60 * this.universalScroll;
+
+            if (this.universalScroll > 0) {
+                this.universalScroll -= 0.0055 * delta / 60;
+            } else {
+                this.universalScroll = 0;
+            }
+
+            if (this.universalScroll < 0.15 && this.bossWait) {
+                this.bossWait = false;
+                if (!this.continued) {
+                    this.cyborgGroup.spawn(540, -100, this);
+                } else {
+                    this.noBoss = true;
+                    this.actionable = false;
+                    this.damageable = false;
+                    this.player.alpha = 0;
+                    this.player.body.setVelocityX(0);
+                    this.player.body.setVelocityY(0);
+                    this.gameOver();
+                    this.scene.pause();
+                    this.scene.launch('pauseScene');
+                }
+            }
+        }
+        
         if (this.actionable) {
             // player movement
             if (this.cursors.up.isDown) {
@@ -697,7 +745,7 @@ class Play extends Phaser.Scene {
         this.sword.targetY = this.player.y - 75;
         this.sword.moveTo.moveTo(this.sword.targetX, this.sword.targetY);
 
-        if ((this.gameover && Phaser.Input.Keyboard.JustDown(this.powerKey)) || Phaser.Input.Keyboard.JustDown(this.resetKey)) {
+        if (Phaser.Input.Keyboard.JustDown(this.resetKey)) {
             this.reset();
         }
     }
@@ -857,27 +905,58 @@ class Play extends Phaser.Scene {
                     this.spawn = this.time.delayedCall(3000, () => {
                         this.regularGroup.spawn(730, -75, this, regularSpeed, -6, 0, 0, 3, 1, 2);
                     }, null, this);
-                    this.spawn = this.time.delayedCall(5500, () => {
+                    this.spawn = this.time.delayedCall(8500, () => {
                         this.spawnEgg(400, -100, this, 90, 1)
+                        this.bossStart = true;
                     }, null, this);
-                    this.spawn = this.time.delayedCall(6600, () => {
+                    this.spawn = this.time.delayedCall(9600, () => {
                         this.spawnEgg(500, -200, this, 90, 1)
                     }, null, this);
-                    this.spawn = this.time.delayedCall(6250, () => {
+                    this.spawn = this.time.delayedCall(10890, () => {
                         this.spawnEgg(640, -75, this, 90, 1)
                     }, null, this);
-                    this.spawn = this.time.delayedCall(7100, () => {
+                    this.spawn = this.time.delayedCall(11100, () => {
                         this.spawnEgg(240, -240, this, 90, 1)
                     }, null, this);
-                    this.spawn = this.time.delayedCall(7600, () => {
+                    this.spawn = this.time.delayedCall(12600, () => {
                         this.spawnEgg(820, -300, this, 90, 1)
                     }, null, this);
-                    delay = 9000;
+
+                    this.spawn = this.time.delayedCall(13000, () => {
+                        this.spawnEgg(440, -100, this, 90, 1)
+                        this.bossStart = true;
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(14600, () => {
+                        this.spawnEgg(520, -200, this, 90, 1)
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(15750, () => {
+                        this.spawnEgg(620, -75, this, 90, 1)
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(16100, () => {
+                        this.spawnEgg(260, -240, this, 90, 1)
+                    }, null, this);
+                    this.spawn = this.time.delayedCall(17600, () => {
+                        this.spawnEgg(800, -300, this, 90, 1)
+                    }, null, this);
+                    this.bossWait = true;
+                    delay = 6000;
                 break;
 
                 case 12 :
-                    this.cyborgGroup.spawn(540, -100, this);
-                    //delay = 0;
+                    if (!this.continued) {
+                        //this.bossWait = true;
+                    }
+                    else {
+                        /*this.noBoss = true;
+                        this.actionable = false;
+                        this.damageable = false;
+                        this.player.alpha = 0;
+                        this.player.body.setVelocityX(0);
+                        this.player.body.setVelocityY(0);
+                        this.gameOver();
+                        this.scene.pause();
+                        this.scene.launch('pauseScene');*/
+                    }
                     this.spawnTrack = -2;
                 break;
 
@@ -1014,9 +1093,9 @@ class Play extends Phaser.Scene {
 
             if (this.lives <= 0) {
                 this.gameOver();
-                console.log("game over");
-                  
-                //this.scene.start("menuScene");  
+                this.scene.pause();
+                this.scene.launch('pauseScene');
+                
             } else {
                 //power loss
                 var powerDrop = 2;
@@ -1040,25 +1119,23 @@ class Play extends Phaser.Scene {
                     this.player.alpha = 1;
                     this.pingPong = 0;
                 }, null, this);
-
-                // damage tween
-
-                this.tweens.addCounter({
-                    from: 0,
-                    to: 10,
-                    duration: 50,
-                    ease: Phaser.Math.Easing.Linear,
-                    loop: 1,
-                    yoyo: true,
-                    onUpdate: tween => {
-                        this.healthValue = tween.getValue();
-                        for (let i = 0; i < 3; i++) {
-                            this.livesArray[i].x = this.healthOrigins[i] + this.healthValue;
-                            this.damagedArray[i].x = this.healthOrigins[i] + this.healthValue;
-                        }
-                    }
-                }); 
             }
+            // damage tween
+            this.tweens.addCounter({
+                from: 0,
+                to: 10,
+                duration: 50,
+                ease: Phaser.Math.Easing.Linear,
+                loop: 1,
+                yoyo: true,
+                onUpdate: tween => {
+                    this.healthValue = tween.getValue();
+                    for (let i = 0; i < 3; i++) {
+                        this.livesArray[i].x = this.healthOrigins[i] + this.healthValue;
+                        this.damagedArray[i].x = this.healthOrigins[i] + this.healthValue;
+                    }
+                }
+            }); 
             this.playerHitSfx.play();
             this.noAmmoSfx.play();
             if (!this.immortal) {
@@ -1067,6 +1144,70 @@ class Play extends Phaser.Scene {
                 this.lives--;
                 this.livesArray.pop;
             }
+
+            if (this.score >= 500) {
+                this.score -= 500;
+            } else {
+                this.score = 0;
+            }
+            this.scoreText.text = this.score;
+            this.scoreTextShadow.text = this.score;
+        }
+    }
+
+    continue() {
+        if (this.noBoss) {
+            this.lossSfx.stop();
+            this.reset();
+        } else {
+            var musicConfig={
+                mute: false,
+                volume: .15,
+                rate: 1,
+                detune: 0,
+                seek: 0,
+                loop: true,
+                delay: 0
+            }
+            this.continued = true;
+            this.soundtrack.play(musicConfig);
+            this.score = 0;
+            this.scoreText.text = this.score;
+            this.scoreTextShadow.text = this.score;
+            this.upgradeSfx.play();
+    
+            this.lives = lives;
+            this.hitbox.setActive(true);
+            this.hitbox.body.enable = true;
+            this.crosshair.setVisible(true);
+            this.gun.setVisible(true);
+            this.sword.setVisible(true);
+            this.actionable = true;
+            this.player.alpha = 1;
+            this.pingPong = 1;
+            this.lossSfx.stop();
+    
+            this.invincible = this.time.delayedCall(3000, () => {
+                this.damageable = true;
+                this.player.alpha = 1;
+                this.pingPong = 0;
+            }, null, this);
+    
+            for (let i = 0; i < 3; i++) {
+                let life = this.add.sprite(47 + 43 * i, 78, 'health');
+                this.livesArray.push(life);
+            }
+            this.damagedArray = [];
+            for (let i = 0; i < 3; i++) {
+                let damage = this.add.sprite(47 + 43 * i, 78, 'damage');
+                damage.alpha = 0;
+                this.damagedArray.push(damage);
+            }
+    
+            this.gameover = false;
+            this.lossPrompt.setVisible(false);
+            this.finalScoreLoss.setVisible(false);
+            this.finalScoreLossShadow.setVisible(false);
         }
     }
 
@@ -1115,6 +1256,7 @@ class Play extends Phaser.Scene {
 
     win() {
         this.victory = true;
+        this.damageable = false;
         this.gameOver();
         var victoryMusicConfig={
             mute: false,
@@ -1150,6 +1292,7 @@ class Play extends Phaser.Scene {
 
     reset() {
         this.soundtrack.stop();
+        this.victorySfx.stop();
         this.registry.destroy();
         this.events.off();
         this.scene.restart();
