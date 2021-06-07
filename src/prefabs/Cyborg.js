@@ -36,10 +36,12 @@ class Cyborg extends Phaser.Physics.Arcade.Sprite {
         this.playerAng = 0;
         this.playerAng2 = 0;
         this.reverseShoot = false;
+        this.bossReduction = 0.25;
         this.moveTo.on('complete', function(gameObject){
             if (gameObject.phase == 0) {
                 //gameObject.phase = 1;
                 gameObject.phase = 1;
+                gameObject.bossReduction = 1;
             }
 
             if (gameObject.phase == 2 && gameObject.pattern == 0) {
@@ -151,7 +153,12 @@ class Cyborg extends Phaser.Physics.Arcade.Sprite {
 
     hit(damage) {
         if (this.active) {
-            this.health -= damage;
+            this.health -= damage * this.bossReduction;
+            if (this.phase == 1 || this.phase == 0) {
+                this.scene.bossPercent2 = this.health / cyborgHealth;
+            } else {
+                this.scene.bossPercent = this.health / cyborgHealth2;
+            }
 
             // damage tween
             if (this.health > 0) {
@@ -178,9 +185,12 @@ class Cyborg extends Phaser.Physics.Arcade.Sprite {
                         this.phase = 2;
                         this.pattern = 0;
                         this.shootDelay = 0;
+                        this.bossReduction = 1;
                     }, null, this.scene);
                     this.phase = -1;
+                    this.bossReduction = 0.25;
                     this.health = cyborgHealth2;
+                    this.scene.bossPercent2 = 0;
                     this.moveTo.setSpeed(0);
                     this.scene.spawnPickup(this.x, this.y, 4, this.bulletDrop);
                     this.scene.spawnPickup(this.x, this.y, 0, this.bulletDrop);
@@ -188,6 +198,7 @@ class Cyborg extends Phaser.Physics.Arcade.Sprite {
                     this.scene.botHurtSfx.play();
                 } else if (this.phase == 2) {
                     // update score
+                    this.scene.bossPercent = 0;
                     this.scene.score += cyborgPoints;
                     this.scene.scoreText.text = this.scene.score;
                     this.scene.scoreTextShadow.text = this.scene.score;
@@ -201,6 +212,7 @@ class Cyborg extends Phaser.Physics.Arcade.Sprite {
     }
 
     death() {
+        this.bossPercent = 0;
         this.body.reset(0, 0);
         this.scene.time.removeEvent(this.shoot);
         this.setActive(false);

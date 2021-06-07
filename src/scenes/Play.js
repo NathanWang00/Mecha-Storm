@@ -37,6 +37,7 @@ class Play extends Phaser.Scene {
         this.load.image('swordPanel', './assets/SwordPanel.png');
         this.load.image('gunPanel', './assets/GunPanel.png');
         this.load.image('backgroundPanel', './assets/BackgroundPanel.png');//UI panel
+        this.load.image('bossHealth', './assets/HealthBar.png')
         this.load.image('endGame', './assets/Endgame.png');
         this.load.image('victory', './assets/Victory.png');
 
@@ -254,6 +255,10 @@ class Play extends Phaser.Scene {
         this.powerPanel = this.add.image(90, 566, 'powerPanel');
         this.scorePanel = this.add.image(990, 63, 'healthPanel');
 
+        this.bossPanel = this.add.image(540, 25, 'bossHealth');
+        this.bossPercent = 1;
+        this.bossPercent2 = 1;
+
         // health display
 
         let playConfig = {
@@ -315,6 +320,18 @@ class Play extends Phaser.Scene {
 
         this.endCap = this.add.rectangle(82, 658, 16, 4, 0xb686ff).setOrigin(0, 0);
         this.powerProgress = this.add.rectangle(78, 658, 24, 0, 0xb686ff).setOrigin(0, 0);
+
+        // boss health bar
+        this.bossCap = this.add.rectangle(this.bossPanel.x + 8 - this.bossPanel.width / 2, this.bossPanel.y + 4 - this.bossPanel.height / 2, 392, 24, 0xb53a3a).setOrigin(0, 0);
+        this.bossCap2 = this.add.rectangle(this.bossPanel.x + 8 - this.bossPanel.width / 2, this.bossPanel.y + 4 - this.bossPanel.height / 2, 392, 24, 0xFF7F50).setOrigin(0, 0);
+        this.bossProgress = this.add.rectangle(this.bossPanel.x + 4 - this.bossPanel.width / 2, this.bossPanel.y + 8 - this.bossPanel.height / 2, 400, 16, 0xb53a3a).setOrigin(0, 0);
+        this.bossProgress2 = this.add.rectangle(this.bossPanel.x + 4 - this.bossPanel.width / 2, this.bossPanel.y + 8 - this.bossPanel.height / 2, 400, 16, 0xFF7F50).setOrigin(0, 0);
+        this.bossPanel.alpha = 0;
+        this.bossCap.alpha = 0;
+        this.bossCap2.alpha = 0;
+        this.bossProgress.alpha = 0;
+        this.bossProgress2.alpha = 0;
+        this.showHealth = false;
 
         // score display
 
@@ -468,6 +485,7 @@ class Play extends Phaser.Scene {
                 this.bossWait = false;
                 if (!this.continued) {
                     this.cyborgGroup.spawn(540, -100, this);
+                    this.showHealth = true;
                 } else {
                     this.noBoss = true;
                     this.actionable = false;
@@ -719,6 +737,36 @@ class Play extends Phaser.Scene {
             this.powerProgress.y = this.endCap.y;
         } 
 
+        if (this.showHealth) {
+            this.bossPanel.alpha += 0.1;
+            this.bossCap.alpha += 0.1;
+            this.bossCap2.alpha += 0.1;
+            this.bossProgress.alpha += 0.1;
+            this.bossProgress2.alpha += 0.1;
+        }
+
+        if (this.bossPanel.alpha > 0) {
+            this.bossProgress.width = 400 * this.bossPercent;
+            offset = 4 / 400;
+            if (this.bossPercent > 1 - offset) {
+                this.bossCap.width = 392;
+            } else if (this.bossPercent < offset) {
+                this.bossCap.width = 0;
+            } else if (offset < this.bossPercent && this.bossPercent < 1-offset) {
+                this.bossCap.width = this.bossProgress.width - 4;
+            }
+
+            this.bossProgress2.width = 400 * this.bossPercent2;
+            offset = 4 / 400;
+            if (this.bossPercent2 > 1 - offset) {
+                this.bossCap2.width = 392;
+            } else if (this.bossPercent2 < offset) {
+                this.bossCap2.width = 0;
+            } else if (offset < this.bossPercent2 && this.bossPercent2 < 1-offset) {
+                this.bossCap2.width = this.bossProgress2.width - 4;
+            }
+        }
+
         //debug
         if (Phaser.Input.Keyboard.JustDown(this.debugPower) && debug) {
             this.power = 1;
@@ -943,20 +991,6 @@ class Play extends Phaser.Scene {
                 break;
 
                 case 12 :
-                    if (!this.continued) {
-                        //this.bossWait = true;
-                    }
-                    else {
-                        /*this.noBoss = true;
-                        this.actionable = false;
-                        this.damageable = false;
-                        this.player.alpha = 0;
-                        this.player.body.setVelocityX(0);
-                        this.player.body.setVelocityY(0);
-                        this.gameOver();
-                        this.scene.pause();
-                        this.scene.launch('pauseScene');*/
-                    }
                     this.spawnTrack = -2;
                 break;
 
@@ -1186,6 +1220,13 @@ class Play extends Phaser.Scene {
             this.player.alpha = 1;
             this.pingPong = 1;
             this.lossSfx.stop();
+
+            this.focus = 1;
+            this.gun.moveTo.speed = gunFollowSpeed;
+            this.gun.angle = 0;
+            this.sword.moveTo.speed = 1000;
+            this.crosshair.alpha = 0;
+            this.hitbox.setVisible(false);
     
             this.invincible = this.time.delayedCall(3000, () => {
                 this.damageable = true;
