@@ -38,6 +38,7 @@ class Play extends Phaser.Scene {
         this.load.image('gunPanel', './assets/GunPanel.png');
         this.load.image('backgroundPanel', './assets/BackgroundPanel.png');//UI panel
         this.load.image('endGame', './assets/Endgame.png');
+        this.load.image('victory', './assets/Victory.png');
 
         this.load.image('health', './assets/Heart.png');
         this.load.image('damage', './assets/Damaged.png');
@@ -1104,10 +1105,10 @@ class Play extends Phaser.Scene {
             }
 
             this.lossPrompt = this.add.image(540, 360, 'endGame');
-            playConfig.color = '#000000';
-            this.finalScore = this.add.text(540 + 2, 340 + 2, this.score, playConfig).setOrigin(0.5);
+            playConfig.color = '#42162c';
+            this.finalScoreLoss = this.add.text(540 + 2, 340 + 2, this.score, playConfig).setOrigin(0.5);
             playConfig.color = '#8ede59';
-            this.finalScoreShadow = this.add.text(540, 340, this.score, playConfig).setOrigin(0.5);
+            this.finalScoreLossShadow = this.add.text(540, 340, this.score, playConfig).setOrigin(0.5);
 
         }
     }
@@ -1126,6 +1127,25 @@ class Play extends Phaser.Scene {
         }
         this.victorySfx.play(victoryMusicConfig);
         // show victory screen and cool stuff!
+
+        // ui
+
+        let playConfig = {
+
+            fontFamily: 'pixelfont',
+            fontSize: '48px',
+            color: '#FFFFFF',
+            stroke: '#213136',
+            strokeThickness: 4,
+            align: 'center'
+
+        }
+
+        this.winPrompt = this.add.image(540, 360, 'victory');
+        playConfig.color = '#0b2d30';
+        this.finalScoreVictory = this.add.text(540 + 2, 415 + 2, this.score, playConfig).setOrigin(0.5);
+        playConfig.color = '#8ede59';
+        this.finalScoreVictoryShadow = this.add.text(540, 415, this.score, playConfig).setOrigin(0.5);
     }
 
     reset() {
