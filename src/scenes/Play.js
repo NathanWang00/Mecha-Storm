@@ -322,10 +322,11 @@ class Play extends Phaser.Scene {
         this.powerProgress = this.add.rectangle(78, 658, 24, 0, 0xb686ff).setOrigin(0, 0);
 
         // boss health bar
+        // change cap 2 and progress 2 for the 2nd health bar color.
         this.bossCap = this.add.rectangle(this.bossPanel.x + 8 - this.bossPanel.width / 2, this.bossPanel.y + 4 - this.bossPanel.height / 2, 392, 24, 0xb53a3a).setOrigin(0, 0);
-        this.bossCap2 = this.add.rectangle(this.bossPanel.x + 8 - this.bossPanel.width / 2, this.bossPanel.y + 4 - this.bossPanel.height / 2, 392, 24, 0xFF7F50).setOrigin(0, 0);
+        this.bossCap2 = this.add.rectangle(this.bossPanel.x + 8 - this.bossPanel.width / 2, this.bossPanel.y + 4 - this.bossPanel.height / 2, 392, 24, 0xFFA500).setOrigin(0, 0);
         this.bossProgress = this.add.rectangle(this.bossPanel.x + 4 - this.bossPanel.width / 2, this.bossPanel.y + 8 - this.bossPanel.height / 2, 400, 16, 0xb53a3a).setOrigin(0, 0);
-        this.bossProgress2 = this.add.rectangle(this.bossPanel.x + 4 - this.bossPanel.width / 2, this.bossPanel.y + 8 - this.bossPanel.height / 2, 400, 16, 0xFF7F50).setOrigin(0, 0);
+        this.bossProgress2 = this.add.rectangle(this.bossPanel.x + 4 - this.bossPanel.width / 2, this.bossPanel.y + 8 - this.bossPanel.height / 2, 400, 16, 0xFFA500).setOrigin(0, 0);
         this.bossPanel.alpha = 0;
         this.bossCap.alpha = 0;
         this.bossCap2.alpha = 0;
@@ -738,11 +739,11 @@ class Play extends Phaser.Scene {
         } 
 
         if (this.showHealth) {
-            this.bossPanel.alpha += 0.1;
-            this.bossCap.alpha += 0.1;
-            this.bossCap2.alpha += 0.1;
-            this.bossProgress.alpha += 0.1;
-            this.bossProgress2.alpha += 0.1;
+            this.bossPanel.alpha += 0.1 * delta / 60;
+            this.bossCap.alpha += 0.1 * delta / 60;
+            this.bossCap2.alpha += 0.1 * delta / 60;
+            this.bossProgress.alpha += 0.1 * delta / 60;
+            this.bossProgress2.alpha += 0.1 * delta / 60;
         }
 
         if (this.bossPanel.alpha > 0) {
