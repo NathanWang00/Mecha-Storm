@@ -188,7 +188,7 @@ class Cyborg extends Phaser.Physics.Arcade.Sprite {
                     this.scene.botHurtSfx.play();
                 } else if (this.phase == 2) {
                     // update score
-                    this.scene.score += heavyPoints;
+                    this.scene.score += cyborgPoints;
                     this.scene.scoreText.text = this.scene.score;
                     this.scene.scoreTextShadow.text = this.scene.score;
                     this.scene.spawnPickup(this.x, this.y, this.power, this.bulletDrop);

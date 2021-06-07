@@ -23,7 +23,7 @@ let config = {
         target: 60,
         forceSetTimeOut: true
     },*/
-    scene: [ Menu, Play ]
+    scene: [ Menu, Play, Pause ]
 }
 
 let game = new Phaser.Game(config);
@@ -55,7 +55,7 @@ let regularSpeed = 150;
 let regularPoints = 125;
 let regularMinSpeed = 50;
 let regularShootDelay = 25;
-let regulatShootDelay2 = 5;
+let regulatShootDelay2 = 4.5;
 
 let heavyHealth = 1500;
 let heavySpeed = 95;
@@ -95,7 +95,7 @@ let pTracerSpeed = 3500;
 let pTracerDamage = 350;
 
 let debug = true;
-let startTrack = 1;
+let startTrack = 12;
 
 /* 
 

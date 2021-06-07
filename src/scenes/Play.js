@@ -75,6 +75,8 @@ class Play extends Phaser.Scene {
         this.gameover = false;
         this.victory = false;
         this.immortal = false;
+        this.continued = false;
+        this.noBoss = false;
 
         //Background Scenery
         this.cameras.main.setBackgroundColor('#FFFFFF');
@@ -264,10 +266,8 @@ class Play extends Phaser.Scene {
         this.livesArray = [];
 
         for (let i = 0; i < 3; i++) {
-
             let life = this.add.sprite(47 + 43 * i, 78, 'health');
             this.livesArray.push(life);
-
         }
 
         this.damagedArray = [];
@@ -697,7 +697,7 @@ class Play extends Phaser.Scene {
         this.sword.targetY = this.player.y - 75;
         this.sword.moveTo.moveTo(this.sword.targetX, this.sword.targetY);
 
-        if ((this.gameover && Phaser.Input.Keyboard.JustDown(this.powerKey)) || Phaser.Input.Keyboard.JustDown(this.resetKey)) {
+        if (Phaser.Input.Keyboard.JustDown(this.resetKey)) {
             this.reset();
         }
     }
@@ -876,8 +876,20 @@ class Play extends Phaser.Scene {
                 break;
 
                 case 12 :
-                    this.cyborgGroup.spawn(540, -100, this);
-                    //delay = 0;
+                    if (!this.continued) {
+                        this.cyborgGroup.spawn(540, -100, this);
+                    }
+                    else {
+                        this.noBoss = true;
+                        this.actionable = false;
+                        this.damageable = false;
+                        this.player.alpha = 0;
+                        this.player.body.setVelocityX(0);
+                        this.player.body.setVelocityY(0);
+                        this.gameOver();
+                        this.scene.pause();
+                        this.scene.launch('pauseScene');
+                    }
                     this.spawnTrack = -2;
                 break;
 
@@ -1014,9 +1026,9 @@ class Play extends Phaser.Scene {
 
             if (this.lives <= 0) {
                 this.gameOver();
-                console.log("game over");
-                  
-                //this.scene.start("menuScene");  
+                this.scene.pause();
+                this.scene.launch('pauseScene');
+                
             } else {
                 //power loss
                 var powerDrop = 2;
@@ -1040,25 +1052,23 @@ class Play extends Phaser.Scene {
                     this.player.alpha = 1;
                     this.pingPong = 0;
                 }, null, this);
-
-                // damage tween
-
-                this.tweens.addCounter({
-                    from: 0,
-                    to: 10,
-                    duration: 50,
-                    ease: Phaser.Math.Easing.Linear,
-                    loop: 1,
-                    yoyo: true,
-                    onUpdate: tween => {
-                        this.healthValue = tween.getValue();
-                        for (let i = 0; i < 3; i++) {
-                            this.livesArray[i].x = this.healthOrigins[i] + this.healthValue;
-                            this.damagedArray[i].x = this.healthOrigins[i] + this.healthValue;
-                        }
-                    }
-                }); 
             }
+            // damage tween
+            this.tweens.addCounter({
+                from: 0,
+                to: 10,
+                duration: 50,
+                ease: Phaser.Math.Easing.Linear,
+                loop: 1,
+                yoyo: true,
+                onUpdate: tween => {
+                    this.healthValue = tween.getValue();
+                    for (let i = 0; i < 3; i++) {
+                        this.livesArray[i].x = this.healthOrigins[i] + this.healthValue;
+                        this.damagedArray[i].x = this.healthOrigins[i] + this.healthValue;
+                    }
+                }
+            }); 
             this.playerHitSfx.play();
             this.noAmmoSfx.play();
             if (!this.immortal) {
@@ -1067,6 +1077,70 @@ class Play extends Phaser.Scene {
                 this.lives--;
                 this.livesArray.pop;
             }
+
+            if (this.score >= 500) {
+                this.score -= 500;
+            } else {
+                this.score = 0;
+            }
+            this.scoreText.text = this.score;
+            this.scoreTextShadow.text = this.score;
+        }
+    }
+
+    continue() {
+        if (this.noBoss) {
+            this.lossSfx.stop();
+            this.reset();
+        } else {
+            var musicConfig={
+                mute: false,
+                volume: .15,
+                rate: 1,
+                detune: 0,
+                seek: 0,
+                loop: true,
+                delay: 0
+            }
+            this.continued = true;
+            this.soundtrack.play(musicConfig);
+            this.score = 0;
+            this.scoreText.text = this.score;
+            this.scoreTextShadow.text = this.score;
+            this.upgradeSfx.play();
+    
+            this.lives = lives;
+            this.hitbox.setActive(true);
+            this.hitbox.body.enable = true;
+            this.crosshair.setVisible(true);
+            this.gun.setVisible(true);
+            this.sword.setVisible(true);
+            this.actionable = true;
+            this.player.alpha = 1;
+            this.pingPong = 1;
+            this.lossSfx.stop();
+    
+            this.invincible = this.time.delayedCall(3000, () => {
+                this.damageable = true;
+                this.player.alpha = 1;
+                this.pingPong = 0;
+            }, null, this);
+    
+            for (let i = 0; i < 3; i++) {
+                let life = this.add.sprite(47 + 43 * i, 78, 'health');
+                this.livesArray.push(life);
+            }
+            this.damagedArray = [];
+            for (let i = 0; i < 3; i++) {
+                let damage = this.add.sprite(47 + 43 * i, 78, 'damage');
+                damage.alpha = 0;
+                this.damagedArray.push(damage);
+            }
+    
+            this.gameover = false;
+            this.lossPrompt.setVisible(false);
+            this.finalScoreLoss.setVisible(false);
+            this.finalScoreLossShadow.setVisible(false);
         }
     }
 
@@ -1115,6 +1189,7 @@ class Play extends Phaser.Scene {
 
     win() {
         this.victory = true;
+        this.damageable = false;
         this.gameOver();
         var victoryMusicConfig={
             mute: false,
@@ -1150,6 +1225,7 @@ class Play extends Phaser.Scene {
 
     reset() {
         this.soundtrack.stop();
+        this.victorySfx.stop();
         this.registry.destroy();
         this.events.off();
         this.scene.restart();

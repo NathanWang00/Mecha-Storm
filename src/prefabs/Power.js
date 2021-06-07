@@ -31,13 +31,17 @@ class Power extends Phaser.Physics.Arcade.Sprite {
         this.body.reset(0, 0);//for debug
         this.scene.upgradeSfx.play();
         if (this.scene.power == 1) {
-            this.scene.score += 50;
-            this.scene.scoreText.text = this.scene.score;
-            this.scene.scoreTextShadow.text = this.scene.score;
+            if (!this.scene.victory) {
+                this.scene.score += 50;
+                this.scene.scoreText.text = this.scene.score;
+                this.scene.scoreTextShadow.text = this.scene.score;
+            }
         } else {
-            this.scene.score += 5;
-            this.scene.scoreText.text = this.scene.score;
-            this.scene.scoreTextShadow.text = this.scene.score;
+            if (!this.scene.victory) {
+                this.scene.score += 5;
+                this.scene.scoreText.text = this.scene.score;
+                this.scene.scoreTextShadow.text = this.scene.score;
+            }
             if (this.scene.power < 0.95 - powerIncrease) {
                 this.scene.power += powerIncrease;
             } else {
