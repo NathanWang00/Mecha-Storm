@@ -22,6 +22,7 @@ class Regular extends Phaser.Physics.Arcade.Sprite {
     }
 
     spawn(x, y, accel, ang, angAccel, power, bullet, pattern) {
+        this.depth = 1;
         this.body.enable = true;
         this.body.reset(x, y);
         this.setActive(true);

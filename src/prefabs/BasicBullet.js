@@ -50,7 +50,18 @@ class BasicBullet extends Phaser.Physics.Arcade.Sprite {
             } else {
                 this.bullet.setSpeed(this.bullet.speed + this.accel * delta / 60);
             }
-            
+            /*
+            this.scene.tweens.addCounter({
+                from: 0,
+                to: 1,
+                duration: 1,
+                ease: Phaser.Math.Easing.Linear,
+                loop: 0,
+                onUpdate: tween => {
+                    this.transitionValue = tween.getValue();
+                    this.alpha = this.transitionValue;
+                }
+            });*/
         }
         if (this.y > this.height + game.config.height || this.y < -400 || this.x > 1000 || this.x < 100) {
             this.stop();

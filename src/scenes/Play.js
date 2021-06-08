@@ -234,6 +234,7 @@ class Play extends Phaser.Scene {
         // crosshair
         this.crosshair = this.add.sprite(200, 200, 'crosshair');
         this.crosshair.alpha = 0;
+        this.crosshair.depth = 5;
 
         // ui physics
         this.rect1 = this.add.rectangle(0, 0, 180, 720, 0x000000).setOrigin(0, 0);
@@ -256,6 +257,16 @@ class Play extends Phaser.Scene {
         this.scorePanel = this.add.image(990, 63, 'healthPanel');
 
         this.bossPanel = this.add.image(540, 25, 'bossHealth');
+
+        this.backgroundPanel1.depth = 10;
+        this.backgroundPanel2.depth = 10;
+        this.healthPanel.depth = 10;
+        this.swordPanel.depth = 10;
+        this.gunPanel.depth = 10;
+        this.powerPanel.depth = 10;
+        this.scorePanel.depth = 10;
+        this.bossPanel.depth = 10;
+
         this.bossPercent = 1;
         this.bossPercent2 = 1;
 
@@ -274,13 +285,16 @@ class Play extends Phaser.Scene {
 
         playConfig.color = '#213136';
         this.ammoCount = this.add.text(90 + 2, 40 + 2, "HEALTH", playConfig).setOrigin(0.5);
+        this.ammoCount.depth = 10;
         playConfig.color = '#89cae0';
         this.ammoCountShadow = this.add.text(90, 40, "HEALTH", playConfig).setOrigin(0.5);
+        this.ammoCountShadow.depth = 10;
 
         this.livesArray = [];
 
         for (let i = 0; i < 3; i++) {
             let life = this.add.sprite(47 + 43 * i, 78, 'health');
+            life.depth = 10;
             this.livesArray.push(life);
         }
 
@@ -290,6 +304,7 @@ class Play extends Phaser.Scene {
 
             let damage = this.add.sprite(47 + 43 * i, 78, 'damage');
             damage.alpha = 0;
+            damage.depth = 10;
             this.damagedArray.push(damage);
 
         }
@@ -305,8 +320,10 @@ class Play extends Phaser.Scene {
         playConfig.strokeThickness = 4;
         playConfig.color = '#213136';
         this.ammoCount = this.add.text(107 + 2, 409 + 2, baseAmmo + "/" + baseAmmo, playConfig).setOrigin(0.5);
+        this.ammoCount.depth = 10;
         playConfig.color = '#e8b046';
         this.ammoCountShadow = this.add.text(107, 409, baseAmmo + "/" + baseAmmo, playConfig).setOrigin(0.5);
+        this.ammoCountShadow.depth = 10;
 
         // power display
 
@@ -314,12 +331,17 @@ class Play extends Phaser.Scene {
         playConfig.strokeThickness = 2;
         playConfig.color = '#213136';
         this.powerLevel = this.add.text(92 + 2, 692 + 2, "POWER LEVEL", playConfig).setOrigin(0.5);
+        this.powerLevel.depth = 10;
         playConfig.color = '#89cae0';
         this.powerLevelShadow = this.add.text(92, 692, "POWER LEVEL", playConfig).setOrigin(0.5);
+        this.powerLevelShadow.depth = 10;
 
 
         this.endCap = this.add.rectangle(82, 658, 16, 4, 0xb686ff).setOrigin(0, 0);
         this.powerProgress = this.add.rectangle(78, 658, 24, 0, 0xb686ff).setOrigin(0, 0);
+
+        this.endCap.depth = 10;
+        this.powerProgress.depth = 10;
 
         // boss health bar
         // change cap 2 and progress 2 for the 2nd health bar color.
@@ -334,44 +356,61 @@ class Play extends Phaser.Scene {
         this.bossProgress2.alpha = 0;
         this.showHealth = false;
 
+        this.bossCap.depth = 10;
+        this.bossCap2.depth = 10;
+        this.bossProgress.depth = 10;
+        this.bossProgress2.depth = 10;
+
         // score display
 
         playConfig.color = '#213136';
         this.scoreLabel = this.add.text(990 + 2, 40 + 2, "SCORE", playConfig).setOrigin(0.5);
+        this.scoreLabel.depth = 10;
         playConfig.color = '#89cae0';
         this.scoreLabelShadow = this.add.text(990, 40, "SCORE", playConfig).setOrigin(0.5);
+        this.scoreLabelShadow.depth = 10;
 
         playConfig.fontSize = '40px';
         playConfig.color = '#213136';
         this.scoreText = this.add.text(990 + 2, 75 + 2, this.score, playConfig).setOrigin(0.5);
+        this.scoreText.depth = 10;
         playConfig.color = '#89cae0';
         this.scoreTextShadow = this.add.text(990, 75, this.score, playConfig).setOrigin(0.5);
+        this.scoreTextShadow.depth = 10;
 
         // weapon display
 
         this.swordIcon = this.add.sprite(57, 140, 'swordIconRegular').setOrigin(0);
+        this.swordIcon.depth = 10;
 
         playConfig.fontSize = '20px';
         playConfig.color = '#213136';
         this.swordLabel = this.add.text(90 + 2, 220 + 2, "STANDARD", playConfig).setOrigin(0.5);
+        this.swordLabel.depth = 10;
         playConfig.color = '#89cae0';
         this.swordLabelShadow = this.add.text(90, 220, "STANDARD", playConfig).setOrigin(0.5);
+        this.swordLabelShadow.depth = 10;
 
         this.gunIcon = this.add.sprite(58, 276, 'gunIconRegular').setOrigin(0);
+        this.gunIcon.depth = 10;
 
         playConfig.fontSize = '20px';
         playConfig.color = '#213136';
         this.gunLabel = this.add.text(90 + 2, 364 + 2, "STANDARD", playConfig).setOrigin(0.5);
+        this.gunLabel.depth = 10;
         playConfig.color = '#89cae0';
         this.gunLabelShadow = this.add.text(90, 364, "STANDARD", playConfig).setOrigin(0.5);
+        this.gunLabelShadow.depth = 10;
 
         // debug ui
 
         playConfig.fontSize = 18;
         playConfig.color = '#213136';
         this.invincibilityText = this.add.text(990 + 2, 690 + 2, "UI DISPLAY ERROR", playConfig).setOrigin(0.5);
+        this.invincibilityText.depth = 10;
         playConfig.color = '#89cae0';
         this.invincibilityTextShadow = this.add.text(990, 690, "UI DISPLAY ERROR", playConfig).setOrigin(0.5);
+        this.invincibilityTextShadow.depth = 10;
         this.invincibilityText.alpha = 0;
         this.invincibilityTextShadow.alpha = 0;
 
@@ -1299,16 +1338,16 @@ class Play extends Phaser.Scene {
                 this.player.alpha = 1;
                 this.pingPong = 0;
             }, null, this);
-    
+            
+            this.livesArray = [];
             for (let i = 0; i < 3; i++) {
                 let life = this.add.sprite(47 + 43 * i, 78, 'health');
+                life.depth = 10;
                 this.livesArray.push(life);
             }
-            this.damagedArray = [];
             for (let i = 0; i < 3; i++) {
-                let damage = this.add.sprite(47 + 43 * i, 78, 'damage');
+                let damage = this.damagedArray[i];
                 damage.alpha = 0;
-                this.damagedArray.push(damage);
             }
     
             this.gameover = false;
