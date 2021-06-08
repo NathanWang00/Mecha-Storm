@@ -365,6 +365,16 @@ class Play extends Phaser.Scene {
         playConfig.color = '#89cae0';
         this.gunLabelShadow = this.add.text(90, 364, "STANDARD", playConfig).setOrigin(0.5);
 
+        // debug ui
+
+        playConfig.fontSize = 18;
+        playConfig.color = '#213136';
+        this.invincibilityText = this.add.text(990 + 2, 690 + 2, "UI DISPLAY ERROR", playConfig).setOrigin(0.5);
+        playConfig.color = '#89cae0';
+        this.invincibilityTextShadow = this.add.text(990, 690, "UI DISPLAY ERROR", playConfig).setOrigin(0.5);
+        this.invincibilityText.alpha = 0;
+        this.invincibilityTextShadow.alpha = 0;
+
         // Collisions
         this.physics.add.collider(this.player, this.rect1);
         this.physics.add.collider(this.player, this.rect2);
@@ -616,11 +626,6 @@ class Play extends Phaser.Scene {
                             this.ammoCountShadow.x = this.ammoOrigin + this.ammoValue ;
                             this.ammoCount.x = this.ammoOrigin + 2 + this.ammoValue;
                                 
-                        },
-                        onComplete: function() {
-
-                            // DEBOUNCE RESET
-
                         }
 
                     }); 
@@ -687,6 +692,31 @@ class Play extends Phaser.Scene {
                 this.playerSpeed = pPlayerSpeed;
             }
         }
+        if (!this.powerMode && Phaser.Input.Keyboard.JustDown(this.powerKey) && this.power < 1) {
+
+            this.powerOrigin = 80;
+            this.endCapOrigin = 84;
+            this.panelOrigin = 92;
+            this.tweens.addCounter({
+
+                from: 0,
+                to: 10,
+                duration: 50,
+                ease: Phaser.Math.Easing.Linear,
+                loop: 1,
+                yoyo: true,
+                onUpdate: tween => {
+    
+                    this.powerValue = tween.getValue();
+                    this.powerPanel.x = this.panelOrigin + this.powerValue;
+                    this.powerProgress.x = this.powerOrigin + this.powerValue;
+                    this.endCap.x = this.endCapOrigin + this.powerValue;
+                            
+                }
+
+            });
+
+        }
         if (this.powerMode) {
             this.power -= this.powerDecrease * delta / 60;
             if (this.powerDecrease < maxPowerLoss) {
@@ -721,6 +751,28 @@ class Play extends Phaser.Scene {
                 this.sword.anims.pause();
 
                 this.playerSpeed = playerSpeed;
+
+                this.powerOrigin = 80;
+                this.endCapOrigin = 84;
+                this.panelOrigin = 92;
+                this.tweens.addCounter({
+
+                    from: 0,
+                    to: 10,
+                    duration: 50,
+                    ease: Phaser.Math.Easing.Linear,
+                    loop: 1,
+                    yoyo: true,
+                    onUpdate: tween => {
+    
+                        this.powerValue = tween.getValue();
+                        this.powerPanel.x = this.panelOrigin + this.powerValue;
+                        this.powerProgress.x = this.powerOrigin + this.powerValue;
+                        this.endCap.x = this.endCapOrigin + this.powerValue;
+                                
+                    }
+
+                });
             }
         }
 
@@ -769,14 +821,27 @@ class Play extends Phaser.Scene {
         }
 
         //debug
+
         if (Phaser.Input.Keyboard.JustDown(this.debugPower) && debug) {
             this.power = 1;
         }
         if (Phaser.Input.Keyboard.JustDown(this.debugInvincible)) {
             if (this.immortal) {
                 this.immortal = false;
+
+                this.invincibilityText.text = "INVINCIBILITY OFF";
+                this.invincibilityTextShadow.text = "INVINCIBILITY OFF";
+                this.invincibilityText.alpha = 1;
+                this.invincibilityTextShadow.alpha = 1;
+
             } else {
                 this.immortal = true;
+
+                this.invincibilityText.text = "INVINCIBILITY ON";
+                this.invincibilityTextShadow.text = "INVINCIBILITY ON";
+                this.invincibilityText.alpha = 1;
+                this.invincibilityTextShadow.alpha = 1;
+
             }
         }
 
