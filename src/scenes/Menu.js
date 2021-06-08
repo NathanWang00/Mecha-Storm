@@ -2,42 +2,81 @@ class Menu extends Phaser.Scene {
     constructor() {
         super("menuScene");
     }
-    create() {
 
-        this.cursors = this.input.keyboard.createCursorKeys();
+    preload() {
 
-        // font config
-        
-        let menuConfig = {
-
-            fontFamily: 'pixelfont',
-            fontSize: '36px',
-            color: '#FFFFFF',
-            stroke: '#000000',
-            strokeThickness: 3,
-            align: 'center'
-
-        }
-
-        // ui
-    
-        menuConfig.fontSize = '24px';
-        this.add.text(1080 / 2, 720 / 2 - 150, 'ARROW KEYS TO MOVE', menuConfig).setOrigin(0.5);
-        this.add.text(1080 / 2, 720 / 2 - 125, 'Z TO SLASH', menuConfig).setOrigin(0.5);
-        this.add.text(1080 / 2, 720 / 2 - 100, 'X TO SHOOT', menuConfig).setOrigin(0.5);
-        this.add.text(1080 / 2, 720 / 2 - 75, 'SHIFT OR CTRL TO AIM/MOVE SLOW', menuConfig).setOrigin(0.5);
-        this.add.text(1080 / 2, 720 / 2 - 50, 'SPACE AT FULL POWER TO TRANSFORM', menuConfig).setOrigin(0.5);
-        this.add.text(1080 / 2, 720 / 2 - 25, 'R TO RESTART', menuConfig).setOrigin(0.5);
-
-        menuConfig.fontSize = '36px';
-        this.add.text(1080 / 2, 720 / 2 + 50, 'PRESS SPACE TO CONTINUE', menuConfig).setOrigin(0.5);
+        this.load.image('instructions', './assets/MainMenu.png');
+        this.load.image('credits', './assets/Credits.png');
+        this.load.image('tower', './assets/TowerMenu.png');
+        this.load.audio('button', ['assets/placeholderSwordShot.wav']);
 
     }
 
-    update() {
+    create() {
 
-        if (this.cursors.space.isDown) {
-            this.scene.start("playScene");  
+        this.startKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.creditsKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
+        this.buttonSound = this.sound.add('button', {volume: 0.4});
+
+        // ui
+    
+        this.homeScreen = this.add.image(0, 0, 'instructions').setOrigin(0,0);
+        this.creditsScreen = this.add.image(0, 0, 'credits').setOrigin(0,0);
+        this.creditsScreen.alpha = 0;
+        this.towerScroll = this.add.tileSprite(850, 360, 0, 0, 'tower').setOrigin(0.5,0.5);
+
+        this.transition = this.add.rectangle(0, 0, 1080, 720, 0x000000).setOrigin(0, 0);
+        this.transition.alpha = 0;
+
+    }
+
+    update(delta) {
+
+        this.universalScroll = 1;
+        this.towerScroll.tilePositionY -= 0.25;
+
+        if (Phaser.Input.Keyboard.JustDown(this.startKey)) {
+
+            this.buttonSound.play();
+
+            this.tweens.addCounter({
+
+                from: 0,
+                to: 1,
+                duration: 100,
+                ease: Phaser.Math.Easing.Linear,
+                loop: 0,
+                onUpdate: tween => {
+
+                    this.transitionValue = tween.getValue();
+                    this.transition.alpha = this.transitionValue;
+                        
+                },
+                onComplete: tween => {
+
+                    this.scene.start("playScene");
+
+                }
+
+            }); 
+  
+        }
+
+        if (Phaser.Input.Keyboard.JustDown(this.creditsKey)) {
+
+            this.buttonSound.play();
+
+            if (this.creditsScreen.alpha == 0) {
+
+                this.creditsScreen.alpha = 1;
+                this.homeScreen.alpha = 0;
+
+            } else if (this.creditsScreen.alpha == 1) {
+
+                this.creditsScreen.alpha = 0;
+                this.homeScreen.alpha = 1;
+
+            }
   
         }
 

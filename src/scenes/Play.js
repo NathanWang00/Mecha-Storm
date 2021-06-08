@@ -1403,7 +1403,31 @@ class Play extends Phaser.Scene {
         this.victorySfx.stop();
         this.registry.destroy();
         this.events.off();
-        this.scene.restart();
+
+        this.transition = this.add.rectangle(0, 0, 1080, 720, 0x000000).setOrigin(0, 0);
+        this.transition.alpha = 0;
+
+        this.tweens.addCounter({
+
+            from: 0,
+            to: 1,
+            duration: 100,
+            ease: Phaser.Math.Easing.Linear,
+            loop: 0,
+            onUpdate: tween => {
+
+                this.transitionValue = tween.getValue();
+                this.transition.alpha = this.transitionValue;
+                    
+            },
+            onComplete: tween => {
+
+                this.scene.restart();
+
+            }
+
+        }); 
+
     }
 
     closestGroup(group) {
