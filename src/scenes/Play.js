@@ -1392,10 +1392,13 @@ class Play extends Phaser.Scene {
             }
 
             this.lossPrompt = this.add.image(540, 360, 'endGame');
+            this.lossPrompt.depth = 10;
             playConfig.color = '#42162c';
             this.finalScoreLoss = this.add.text(540 + 2, 340 + 2, this.score, playConfig).setOrigin(0.5);
+            this.finalScoreLoss.depth = 10;
             playConfig.color = '#8ede59';
             this.finalScoreLossShadow = this.add.text(540, 340, this.score, playConfig).setOrigin(0.5);
+            this.finalScoreLossShadow.depth = 10;
 
         }
     }
@@ -1430,10 +1433,13 @@ class Play extends Phaser.Scene {
         }
 
         this.winPrompt = this.add.image(540, 360, 'victory');
+        this.winPrompt.depth = 10;
         playConfig.color = '#0b2d30';
         this.finalScoreVictory = this.add.text(540 + 2, 415 + 2, this.score, playConfig).setOrigin(0.5);
+        this.finalScoreVictory.depth = 10;
         playConfig.color = '#8ede59';
         this.finalScoreVictoryShadow = this.add.text(540, 415, this.score, playConfig).setOrigin(0.5);
+        this.finalScoreVictoryShadow.depth = 10;
     }
 
     reset() {
